@@ -7,6 +7,8 @@ var debug = false;
 ******************************************/
 var includeManager = new function() {
   var _this = this;
+  this.script = document.currentScript;
+  this.scriptRoot = this.script.src.substr(0, this.script.src.lastIndexOf('/') + 1);
   this.root = document.location.origin + document.location.pathname;
   var pageName = document.location.pathname.split('/').pop();
   if (~pageName.indexOf('.')) {
@@ -95,6 +97,11 @@ function include(srcLocations, onLoaded) {
   var scripts = [].slice.call(document.querySelectorAll('script'));
   var found = false;
   for (var i = 0; i < srcLocations.length; i++) {
+    if (srcLocations[i].charAt(0) == '.') {
+      srcLocations[i] = includeManager.scriptRoot + srcLocations[i].substring(2);
+      console.log(srcLocations[i]);
+    }
+
     if (debug) console.log('-->' + srcLocations[i]);
     scripts.forEach(function(item, index, array) {
       if (item.getAttribute('src') == srcLocations[i]) found = true;
@@ -121,7 +128,7 @@ function include(srcLocations, onLoaded) {
 
 var muse = new function() {
   this.script = document.currentScript;
-  this.root = this.script.src.substr(0, this.script.src.lastIndexOf('/') + 1);
+  this.root = includeManager.scriptRoot;
   this.app = this.script.getAttribute('main');
 
   // Make utils available everywhere by default

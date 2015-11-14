@@ -1,4 +1,4 @@
-include([muse.root + 'pointStack.js'], function() {
+include(['./pointStack.js'], function() {
   console.log('graph');
   function param() {
     this.x = {
