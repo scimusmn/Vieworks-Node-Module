@@ -16,7 +16,7 @@ include(['./pointStack.js'], function() {
     };
   }
 
-  var smmGraph = inheritFrom(HTMLCanvasElement, function() {
+  var museGraph = inheritFrom(HTMLCanvasElement, function() {
     var _this = this;
 
     this.points = null;
@@ -250,6 +250,6 @@ include(['./pointStack.js'], function() {
     };
   });
 
-  document.registerElement('smm-graph', {prototype: smmGraph.prototype, extends: 'canvas'});
-  window.smmGraph = smmGraph;
+  document.registerElement('muse-graph', {prototype: museGraph.prototype, extends: 'canvas'});
+  window.museGraph = museGraph;
 });
