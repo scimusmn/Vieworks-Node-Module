@@ -1,4 +1,4 @@
-include(['src/Muse/pointStack.js'], function() {
+include([muse.root + 'pointStack.js'], function() {
   console.log('graph');
   function param() {
     this.x = {
@@ -61,7 +61,8 @@ include(['src/Muse/pointStack.js'], function() {
 
     this.convert = function(val, which) {
       //if (!this.range[which].flip)
-        return map(val, 0, 1, this.range[which].min, this.range[which].max);
+      return map(val, 0, 1, this.range[which].min, this.range[which].max);
+
       //else return map(val, 1, 0, this.range[which].min, this.range[which].max);
     };
 

@@ -14,6 +14,10 @@ function µ(id, elem) {
     case '|':
       ret = root;
       break;
+    case '+':
+      ret = document.createElement(spl[0].substring(1));
+      if (elem) elem.appendChild(ret);
+      break;
     default:
       ret = root.querySelector(spl[0]);
       break;

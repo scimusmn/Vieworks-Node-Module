@@ -119,12 +119,12 @@ function include(srcLocations, onLoaded) {
   if (!srcLocations.length) loaded();
 }
 
-var includer = new function() {
-
+var muse = new function() {
   this.script = document.currentScript;
+  this.root = this.script.src.substr(0, this.script.src.lastIndexOf('/') + 1);
   this.app = this.script.getAttribute('main');
 
   // Make utils available everywhere by default
-  include(['src/Muse/utils.js', 'src/vendor/jquery.min.js', this.app]);
+  include([this.root + 'utils.js', 'src/vendor/jquery.min.js', this.app]);
 
 };
