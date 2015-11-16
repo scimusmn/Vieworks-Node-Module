@@ -1,11 +1,3 @@
-
-// I've changed this selector function
-// to use 'µ' instead of '$'. '$' is so commonly
-// associated with jquery that it will be confusing
-// for future developers. The change also allows
-// incorporation of jquery without conflicts.
-// -@tnordberg, 10/09/2015
-
 function µ(id, elem) {
   var ret;
   var root = ((elem) ? elem : document);

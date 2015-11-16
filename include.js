@@ -99,7 +99,6 @@ function include(srcLocations, onLoaded) {
   for (var i = 0; i < srcLocations.length; i++) {
     if (srcLocations[i].charAt(0) == '.') {
       srcLocations[i] = includeManager.scriptRoot + srcLocations[i].substring(2);
-      console.log(srcLocations[i]);
     }
 
     if (debug) console.log('-->' + srcLocations[i]);
