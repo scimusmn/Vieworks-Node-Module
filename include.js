@@ -131,6 +131,6 @@ var muse = new function() {
   this.app = this.script.getAttribute('main');
 
   // Make utils available everywhere by default
-  include([this.root + 'utils.js', 'src/vendor/jquery.min.js', this.app]);
+  include([this.root + 'utils.js', this.app]);
 
 };
