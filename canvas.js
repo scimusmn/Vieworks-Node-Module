@@ -14,7 +14,7 @@ var canVas = inheritFrom(HTMLCanvasElement, function() {
   };
 
   this.createdCallback = function() {
-		this.mouse = {x:0, y:0};
+    this.mouse = {x:0, y:0};
     console.log(this.id);
     this.ctx = this.getContext('2d');
   };
