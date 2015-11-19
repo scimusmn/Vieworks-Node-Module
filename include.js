@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 
 /*****************************************
 * This is an adaptation of an include manager that I had written
@@ -115,7 +115,6 @@ function include(srcLocations, onLoaded) {
       if (item.getAttribute('src') == srcLocations[i]) found = true;
     });
 
-    if (found) console.log(srcLocations[i] + 'has been found');
     if (!found) {
       var scrpt = document.createElement('script');
       var src = includeManager.shorten(srcLocations[i]);
