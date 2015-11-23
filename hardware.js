@@ -38,7 +38,7 @@ include([], function() {
               if (spl[1] == 'err')
                 console.log(_this.serialport + ' does not exist');
               else if (spl[1] == 'ack') {
-                setTimeout(_this.onSerialOpen, 2000);
+                setTimeout(_this.onSerialOpen, 9000);
                 console.log('Connection successful');
               }
             } else _this.messageCallback(evt);
@@ -333,7 +333,6 @@ include([], function() {
 
         } else if (item.type === 'digital') {
           _this.watchPin(item.pin, function(pin, val) {
-            console.log(val);
             if (!item.hit) {
               if (!item.target) item.onData(val);
               else item.target[item.which](val);
