@@ -87,7 +87,7 @@ include([], function() {
     var DIGI_WATCH = 112;  //pins 2-13
 
     /*****************************************************
-     * explanation of bit packages to and from arduino
+     * explanation of bit packages to arduino
 
      0 and 1 represent actual bits, letters are described below
 
@@ -148,8 +148,31 @@ include([], function() {
         | 1 | 1 | 1 | 0 | P | P | P | V |      | 0 | V | V | V | V | V | V | V |
          -------------------------------        -------------------------------
 
-        P: bits representing pin number to read 3=0,5=1,6=2,9=3,10=4,11=5
+        P: bits representing pin number to write 3=0,5=1,6=2,9=3,10=4,11=5
         V: bits representing the value to write to the pin
+
+    /*****************************************************
+     * explanation of bit packages from arduino
+     *****************************************************
+
+    For Analog Read:
+                    Byte 1                                   Byte 2
+         _______________________________        _______________________________
+        | 1 | 1 | P | P | P | V | V | V |      | 0 | V | V | V | V | V | V | V |
+         -------------------------------        -------------------------------
+
+        P: bits representing pin number to read 3=0,5=1,6=2,9=3,10=4,11=5
+        V: bits representing the value read from the pin
+
+    For Digital Read:
+                    Byte 1
+         _______________________________
+        | 1 | 1 | P | P | P | P | P | V |
+         -------------------------------
+
+        P: bits representing the pin being reported 0-32
+        V: bit representing the value read from the pin 0 or 1
+
     */
 
     this.ws = null;
@@ -164,6 +187,7 @@ include([], function() {
             var val = ((chr & 7) << 7) + (msg.charCodeAt(++i) & 127); //extract the value
             if (typeof _this.anaHandlers[pin] == 'function') _this.anaHandlers[pin](pin, val);
           } else if (chr & (START + DIGI_READ)) {      //if the packet is digitalRead
+            //extract the pin number
             var pin = ((chr & 62) >> 1);
             var val = chr & 1;
             if (typeof _this.digiHandlers[pin] == 'function') _this.digiHandlers[pin](pin, val);

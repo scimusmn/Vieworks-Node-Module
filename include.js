@@ -86,7 +86,16 @@ function include(srcLocations, onLoaded) {
   var loaded = function() {
     if (this.src) {
       var src = includeManager.shorten(this.src);
-      if (src) includeManager.includes[src].loading = false;
+      if (debug) console.log('just loaded ' + src);
+
+      if (src) {
+        var that = includeManager.includes[src];
+        that.loading = false;
+        if (typeof that.done == 'undefined') {
+          that.done = true;
+          if (debug) console.log(src + ' is done and has no dependents');
+        }
+      }
     }
 
     if (++numLoaded >= srcLocations.length) {
@@ -117,7 +126,8 @@ function include(srcLocations, onLoaded) {
 
     //in case another module loaded the script just before and
     //it hasn't loaded fully
-    else if (includeManager.includes[srcLocations[i]]) {
+    else if (includeManager.includes[srcLocations[i]] && !includeManager.includes[srcLocations[i]].done) {
+      console.log(curScript + ' is dependent on ' + srcLocations[i]);
       includeManager.includes[srcLocations[i]].dependents.push(curScript);
     } else loaded();
   }
@@ -131,6 +141,6 @@ var muse = new function() {
   this.app = this.script.getAttribute('main');
 
   // Make utils available everywhere by default
-  include([this.root + 'utils.js', 'src/vendor/jquery.min.js', this.app]);
+  include([this.root + 'utils.js', this.app]);
 
 };

@@ -18,11 +18,6 @@ function pointStack(maxPnts) {
 
   points.addPoint = function(pnt) {
 
-    // TODO: Give this point an accuracy score
-    // based on how close to the current pattern it is.
-    var accuracy = 0;
-    var aColor = this.getAccuracyColor(accuracy);
-
     if (points.length) {
 
       if (this.hasMoved(pnt) === true) {
@@ -31,11 +26,11 @@ function pointStack(maxPnts) {
 
           sampsX.addSample(pnt.x);
           sampsY.addSample(pnt.y);
-          points.push({x:sampsX.ave, y:sampsY.ave, color:aColor});
+          points.push({x:sampsX.ave, y:sampsY.ave});
 
         } else {
 
-          points.push({x:pnt.x, y:pnt.y, color:aColor});
+          points.push({x:pnt.x, y:pnt.y});
 
         }
 
@@ -50,10 +45,8 @@ function pointStack(maxPnts) {
       }
 
     } else {
-
-      points.push({x:pnt.x, y:pnt.y, color:aColor});
+      points.push({x:pnt.x, y:pnt.y});
       return false;
-
     }
 
   };

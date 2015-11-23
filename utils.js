@@ -158,78 +158,79 @@ function distance(p1, p2) {
   return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));
 }
 
-Array.prototype.min = function(){
-  return Math.min.apply({},this);
-}
+Array.prototype.min = function() {
+  return Math.min.apply({}, this);
+};
 
-Array.prototype.max = function(){
-  return Math.max.apply({},this);
-}
+Array.prototype.max = function() {
+  return Math.max.apply({}, this);
+};
 
-Array.prototype.last = function(){
-  return this[this.length-1];
+Array.prototype.last = function() {
+  return this[this.length - 1];
 }
 
 function getPos(el) {
-    // yay readability
-    for (var lx=0, ly=0; el != null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
-    return {x: lx,y: ly};
+  // yay readability
+  for (var lx = 0, ly = 0; el != null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+  return {x: lx, y: ly};
 }
 
-function aveCont(points){
-  if(points===undefined) points=5;
+function aveCont(points) {
+  if (points === undefined) points = 5;
   var samps = [];
-  this.ave=0;
-  var ind=0;
-  var tot=0;
-  for(var i=0; i<points; i++){
+  this.ave = 0;
+  var ind = 0;
+  var tot = 0;
+  for (var i = 0; i < points; i++) {
     samps.push(0.0);
   }
 
-  this.changeNumSamps = function(num){
-    samps.length=0;
-    for(var i=0; i<num; i++){
+  this.changeNumSamps = function(num) {
+    samps.length = 0;
+    for (var i = 0; i < num; i++) {
       samps.push(0.0);
     }
   }
 
-  this.addSample=function(val){
-    tot-=samps[ind];
-    samps[ind]=val;
-    tot+=val;
-    this.ave=tot/samps.length;
-    ind=(ind+1)%samps.length;
+  this.addSample = function(val) {
+    tot -= samps[ind];
+    samps[ind] = val;
+    tot += val;
+    this.ave = tot / samps.length;
+    ind = (ind + 1) % samps.length;
     return this.ave;
   }
 
   return this;
 }
 
-function map(val,inMin,inMax,outMin,outMax){
-  return (val-inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
+function map(val, inMin, inMax, outMin, outMax) {
+  return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
-function clamp(val,Min,Max) {
-  with (Math){
-    return max(Min,min(val,Max));
+function clamp(val, Min, Max) {
+  with (Math) {
+    return max(Min, min(val, Max));
   }
 }
 
 function sign(x) {
-    return (x > 0) - (x < 0);
+  return (x > 0) - (x < 0);
 }
 
 function zeroPad(num, size) {
-  var s = num+'';
+  var s = num + '';
   while (s.length < size) s = '0' + s;
   return s;
 }
 
 // Reduce a fraction by finding the Greatest Common Divisor and dividing by it.
-function reduce(numerator,denominator){
-  var gcd = function gcd(a,b){
-    return b ? gcd(b, a%b) : a;
+function reduce(numerator, denominator) {
+  var gcd = function gcd(a, b) {
+    return b ? gcd(b, a % b) : a;
   };
-  gcd = gcd(numerator,denominator);
-  return [numerator/gcd, denominator/gcd];
+
+  gcd = gcd(numerator, denominator);
+  return [numerator / gcd, denominator / gcd];
 }

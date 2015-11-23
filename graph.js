@@ -1,5 +1,4 @@
 include(['./pointStack.js'], function() {
-  console.log('graph');
   function param() {
     this.x = {
       min:0,

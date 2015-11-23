@@ -3,10 +3,12 @@ include([], function() {
     var _this = this;
     var audio = new window.AudioContext();
 
+    //create the oscillator, volume control and stereo panning
     var osc = audio.createOscillator();
     var gain = audio.createGain();
     var panNode = audio.createStereoPanner();
 
+    //to customize the wave form, use the following
     /*var real = new Float32Array([0, 1, .5, 0, -.5, -1]);
     var imag = new Float32Array([0, 1, .5, 0, -.5, 0]);
 
@@ -14,15 +16,19 @@ include([], function() {
 
     osc.setPeriodicWave(wave)*/;
 
+    //set the initial frequency
     osc.frequency.value = 50;
 
     //osc.type = 'sawtooth';
 
+    //initialize the volume to 100%
     gain.gain.value = 1;
 
     //sets the pan of the channel
     panNode.pan.value = ((which == 'left') ? -1 : 1);
 
+    //chain the oscillator to the volume control to the panner, to the output,
+    // and being the oscillator
     osc.connect(gain);
     gain.connect(panNode);
     panNode.connect(audio.destination);
@@ -34,6 +40,8 @@ include([], function() {
     this.volScale = 1;
     this.muted = false;
 
+    //function to ramp the volume to a new value. Prevents scaring people
+    // if the volume was left all the way up and the sound timed out.
     this.rampVolume = function(vol) {
       if (Math.abs(_this.volume - vol) > .01 || this.muted) {
         _this.volume += sign(vol - _this.volume) * .01;
@@ -43,28 +51,34 @@ include([], function() {
       } else _this.setVolume(vol);
     };
 
+    //return the current volume setting
     this.getVolume = function() {
       return this.volume;
     };
 
+    //directly set teh volume, without ramping.
     this.setVolume = function(vol) {
       this.volume = vol;
       this.eVolume = vol;
+      //if the commanded volume is greater than 0, unmute the channel.
       if (this.volume > 0) muted = false;
       else muted = true;
       gain.gain.value = this.volume * this.volScale;
     };
 
+    // ramp the volume down and mute.
     this.mute = function() {
       this.muted = true;
       this.rampVolume(0);
     };
 
+    // return the volume to it's previous setting.
     this.unmute = function() {
       this.muted = false;
       this.rampVolume(this.eVolume);
     };
 
+    //directly set the frequency, without any volume compensation on the high end
     this.setFrequency = function(freq) {
       osc.frequency.value = freq;
     };
