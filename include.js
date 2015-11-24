@@ -127,7 +127,7 @@ function include(srcLocations, onLoaded) {
     //in case another module loaded the script just before and
     //it hasn't loaded fully
     else if (includeManager.includes[srcLocations[i]] && !includeManager.includes[srcLocations[i]].done) {
-      console.log(curScript + ' is dependent on ' + srcLocations[i]);
+      //console.log(curScript + ' is dependent on ' + srcLocations[i]);
       includeManager.includes[srcLocations[i]].dependents.push(curScript);
     } else loaded();
   }

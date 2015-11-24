@@ -168,7 +168,7 @@ Array.prototype.max = function() {
 
 Array.prototype.last = function() {
   return this[this.length - 1];
-}
+};
 
 function getPos(el) {
   // yay readability
@@ -191,7 +191,7 @@ function aveCont(points) {
     for (var i = 0; i < num; i++) {
       samps.push(0.0);
     }
-  }
+  };
 
   this.addSample = function(val) {
     tot -= samps[ind];
@@ -200,7 +200,7 @@ function aveCont(points) {
     this.ave = tot / samps.length;
     ind = (ind + 1) % samps.length;
     return this.ave;
-  }
+  };
 
   return this;
 }

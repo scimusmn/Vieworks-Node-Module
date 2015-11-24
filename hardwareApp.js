@@ -1,4 +1,63 @@
 include([], function() {
+  var serial = function() {
+    var _this = this;
+    this.port = '';
+    this.connectionId;
+
+    console.log(chrome.serial);
+
+    this.connect = function(partialName, cb) {
+      chrome.serial.getDevices(function(ports) {
+        for (var i = 0; i < ports.length; i++) {
+          if (ports[i].path.indexOf(partialName) > -1) {
+            _this.port = ports[i].path;
+            chrome.serial.connect(_this.port, {bitrate: 115200}, function(info) {
+              _this.connectionId = info.connectionId;
+              cb();
+            });
+
+            return;
+          }
+        }
+
+        console.log('Port not found');
+      });
+    };
+
+    this.messageCallback = function(string) {};
+
+    var stringReceived = '';
+
+    this.write = function(str) {
+      chrome.serial.send(_this.connectionId, convertStringToArrayBuffer(str), function() {});
+    };
+
+    // Convert string to ArrayBuffer
+    var convertStringToArrayBuffer = function(str) {
+      var buf = new ArrayBuffer(str.length);
+      var bufView = new Uint8Array(buf);
+      for (var i = 0; i < str.length; i++) {
+        bufView[i] = str.charCodeAt(i);
+      }
+
+      return buf;
+    };
+
+    var onReceiveCallback = function(info) {
+      if (info.connectionId == _this.connectionId && info.data) {
+        var str = convertArrayBufferToString(info.data);
+        if (str.charAt(str.length - 1) === '\n') {
+          stringReceived += str.substring(0, str.length - 1);
+          meesageCallback(stringReceived);
+          stringReceived = '';
+        } else {
+          stringReceived += str;
+        }
+      }
+    };
+
+    chrome.serial.onReceive.addListener(onReceiveCallback);
+  };
 
   var websocket = function() {
     this.address = 'ws://localhost:8080/';
@@ -176,7 +235,7 @@ include([], function() {
 
     */
 
-    this.ws = null;
+    this.serial = null;
 
     this.onMessage = function(evt) {
       msg = evt.data;
@@ -202,30 +261,30 @@ include([], function() {
     }
 
     this.digitalWrite = function(pin, state) {
-      if (pin <= 13) this.ws.send('r|' + asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
+      if (pin <= 13) this.serial.write('r|' + asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
       else console.log('Pin must be less than or equal to 13');
     };
 
     this.digitalRead = function(pin) {
-      this.ws.send('r|' + asChar(START + DIGI_READ + (pin & 31)));
+      this.serial.write('r|' + asChar(START + DIGI_READ + (pin & 31)));
     };
 
     this.analogWrite = function(pin, val) {
       if (val >= 0 && val < 256)
-        this.ws.send('r|' + asChar(START + ANA_WRITE + ((pin & 7) << 1) + (val >> 7)) + asChar(val & 127));
+        this.serial.write('r|' + asChar(START + ANA_WRITE + ((pin & 7) << 1) + (val >> 7)) + asChar(val & 127));
     };
 
     this.watchPin = function(pin, handler) {
       console.log('set up watch on pin ' + pin);
-      if (pin <= 13) this.ws.send('r|' + asChar(START + DIGI_WATCH + (pin & 15)));
-      else this.ws.send('r|' + asChar(START + DIGI_WATCH_2 + ((pin - 13) & 7)));
+      if (pin <= 13) this.serial.write('r|' + asChar(START + DIGI_WATCH + (pin & 15)));
+      else this.serial.write('r|' + asChar(START + DIGI_WATCH_2 + ((pin - 13) & 7)));
       this.digiHandlers[pin] = handler;
     };
 
     this.analogReport = function(pin, interval, handler) {
       interval /= 2;
       if (interval < 256) {
-        this.ws.send('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1) + (interval >> 7)) + asChar(interval & 127));
+        this.serial.write('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1) + (interval >> 7)) + asChar(interval & 127));
         this.anaHandlers[pin] = handler;
       } else console.log('interval must be less than 512');
     };
@@ -239,11 +298,11 @@ include([], function() {
     };
 
     this.analogRead = function(pin) {
-      this.ws.send('r|' + asChar(START + ANA_READ + ((pin & 7) << 1)));
+      this.serial.write('r|' + asChar(START + ANA_READ + ((pin & 7) << 1)));
     };
 
     this.stopReport = function(pin) {
-      this.ws.send('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1)) + asChar(0));
+      this.serial.write('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1)) + asChar(0));
     };
 
     this.onReady = function() {};
@@ -372,14 +431,12 @@ include([], function() {
 
     this.createdCallback = function() {
       var _this = this;
-      this.serial = this.getAttribute('serialport');
-      this.ws = new websocket();
-      this.ws.messageCallback = _this.onMessage.bind(_this);
-      this.ws.connectCallback = function() {
-        _this.ws.openSerialPort(_this.serial, _this.serialOpenCB.bind(_this));
-      };
+      this.port = this.getAttribute('serialport');
+      this.serial = new serial();
+      this.serial.messageCallback = _this.onMessage.bind(_this);
+      this.serial.connect(_this.port, _this.serialOpenCB.bind(_this));
 
-      this.ws.connect();
+      //this.ws.connect();
     };
   });
 

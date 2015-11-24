@@ -35,35 +35,30 @@ include([], function() {
     osc.start(0);
 
     this.rampTimer;
-    this.volume = 1;
     this.eVolume = 1;
+    this.volume = 1;
     this.volScale = 1;
     this.muted = false;
 
     //function to ramp the volume to a new value. Prevents scaring people
     // if the volume was left all the way up and the sound timed out.
     this.rampVolume = function(vol) {
-      if (Math.abs(_this.volume - vol) > .01 || this.muted) {
-        _this.volume += sign(vol - _this.volume) * .01;
-        gain.gain.value = _this.volume * _this.volScale;
+      if (Math.abs(_this.eVolume - vol) > .01) {
+        //console.log(_this.eVolume);
+        _this.eVolume += sign(vol - _this.eVolume) * .01;
+        gain.gain.value = _this.eVolume * _this.volScale;
         clearTimeout(_this.rampTimer);
         _this.rampTimer = setTimeout(function() {_this.rampVolume(vol);}, 1);
-      } else _this.setVolume(vol);
+      } else gain.gain.value = vol * _this.volScale;
     };
 
     //return the current volume setting
     this.getVolume = function() {
-      return this.volume;
+      return _this.eVolume;
     };
 
-    //directly set teh volume, without ramping.
     this.setVolume = function(vol) {
-      this.volume = vol;
-      this.eVolume = vol;
-      //if the commanded volume is greater than 0, unmute the channel.
-      if (this.volume > 0) muted = false;
-      else muted = true;
-      gain.gain.value = this.volume * this.volScale;
+      _this.volume = vol;
     };
 
     // ramp the volume down and mute.
@@ -75,7 +70,7 @@ include([], function() {
     // return the volume to it's previous setting.
     this.unmute = function() {
       this.muted = false;
-      this.rampVolume(this.eVolume);
+      this.rampVolume(this.volume);
     };
 
     //directly set the frequency, without any volume compensation on the high end
@@ -103,7 +98,7 @@ include([], function() {
       if (this.volScale > 1) this.volScale = 1;
 
       if (!this.muted) gain.gain.value = this.volume * this.volScale;
-      else this.unmute();
+      else this.unmute(), console.log('unmuted!');
 
       this.setFrequency(targFreq);
     };
