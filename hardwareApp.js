@@ -2,7 +2,7 @@ include([], function() {
   var serial = function() {
     var _this = this;
     this.port = '';
-    this.connectionId;
+    this.connectionId = null;
 
     console.log(chrome.serial);
 
@@ -13,7 +13,7 @@ include([], function() {
             _this.port = ports[i].path;
             chrome.serial.connect(_this.port, {bitrate: 115200}, function(info) {
               _this.connectionId = info.connectionId;
-              cb();
+              setTimeout(cb,2000);
             });
 
             return;
@@ -29,7 +29,7 @@ include([], function() {
     var stringReceived = '';
 
     this.write = function(str) {
-      chrome.serial.send(_this.connectionId, convertStringToArrayBuffer(str), function() {});
+      chrome.serial.send(_this.connectionId, convertStringToArrayBuffer(str + '\n'), function() {});
     };
 
     // Convert string to ArrayBuffer
@@ -43,14 +43,19 @@ include([], function() {
       return buf;
     };
 
+    // Convert string to ArrayBuffer
+    var convertArrayBufferToString = function(buf) {
+      return String.fromCharCode.apply(null, new Uint8Array(buf));
+    };
+
     var onReceiveCallback = function(info) {
       if (info.connectionId == _this.connectionId && info.data) {
         var str = convertArrayBufferToString(info.data);
-        if (str.charAt(str.length - 1) === '\n') {
+        if (str.length > 1 && (str.charAt(str.length - 1) ==='\n'|| str.charAt(str.length - 1) ==='\n')) {
           stringReceived += str.substring(0, str.length - 1);
-          meesageCallback(stringReceived);
+          _this.messageCallback(stringReceived);
           stringReceived = '';
-        } else {
+        } else if(str.charAt(str.length - 1) !=='\n' || str.charAt(str.length - 1) !=='\r'){
           stringReceived += str;
         }
       }
@@ -237,8 +242,8 @@ include([], function() {
 
     this.serial = null;
 
-    this.onMessage = function(evt) {
-      msg = evt.data;
+
+    this.onMessage = function(msg) {
       if (msg.length >= 1) {
         for (var i = 0; i < msg.length; i++) {
           var chr = msg.charCodeAt(i);
@@ -261,30 +266,29 @@ include([], function() {
     }
 
     this.digitalWrite = function(pin, state) {
-      if (pin <= 13) this.serial.write('r|' + asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
+      if (pin <= 13) this.serial.write(asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
       else console.log('Pin must be less than or equal to 13');
     };
 
     this.digitalRead = function(pin) {
-      this.serial.write('r|' + asChar(START + DIGI_READ + (pin & 31)));
+      this.serial.write(asChar(START + DIGI_READ + (pin & 31)));
     };
 
     this.analogWrite = function(pin, val) {
       if (val >= 0 && val < 256)
-        this.serial.write('r|' + asChar(START + ANA_WRITE + ((pin & 7) << 1) + (val >> 7)) + asChar(val & 127));
+        this.serial.write(asChar(START + ANA_WRITE + ((pin & 7) << 1) + (val >> 7)) + asChar(val & 127));
     };
 
     this.watchPin = function(pin, handler) {
-      console.log('set up watch on pin ' + pin);
-      if (pin <= 13) this.serial.write('r|' + asChar(START + DIGI_WATCH + (pin & 15)));
-      else this.serial.write('r|' + asChar(START + DIGI_WATCH_2 + ((pin - 13) & 7)));
+      if (pin <= 13) this.serial.write(asChar(START + DIGI_WATCH + (pin & 15)));
+      else this.serial.write(asChar(START + DIGI_WATCH_2 + ((pin - 13) & 7)));
       this.digiHandlers[pin] = handler;
     };
 
     this.analogReport = function(pin, interval, handler) {
       interval /= 2;
       if (interval < 256) {
-        this.serial.write('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1) + (interval >> 7)) + asChar(interval & 127));
+        this.serial.write(asChar(START + ANA_REPORT + ((pin & 7) << 1) + (interval >> 7)) + asChar(interval & 127));
         this.anaHandlers[pin] = handler;
       } else console.log('interval must be less than 512');
     };
@@ -298,11 +302,11 @@ include([], function() {
     };
 
     this.analogRead = function(pin) {
-      this.serial.write('r|' + asChar(START + ANA_READ + ((pin & 7) << 1)));
+      this.serial.write(asChar(START + ANA_READ + ((pin & 7) << 1)));
     };
 
     this.stopReport = function(pin) {
-      this.serial.write('r|' + asChar(START + ANA_REPORT + ((pin & 7) << 1)) + asChar(0));
+      this.serial.write(asChar(START + ANA_REPORT + ((pin & 7) << 1)) + asChar(0));
     };
 
     this.onReady = function() {};
@@ -397,6 +401,7 @@ include([], function() {
   var hardWare = inheritFrom(webArduino, function() {
     // function to call when the websocket server connects to the serial port.
     this.serialOpenCB = function() {
+      console.log('opened serial');
       this.ready = true;
       var _this = this;
       this.onReady();
