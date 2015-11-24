@@ -104,8 +104,8 @@ function include(srcLocations, onLoaded) {
   };
 
   var scripts = [].slice.call(document.querySelectorAll('script'));
-  var found = false;
   for (var i = 0; i < srcLocations.length; i++) {
+    var found = false;
     if (srcLocations[i].charAt(0) == '.') {
       srcLocations[i] = includeManager.scriptRoot + srcLocations[i].substring(2);
     }
