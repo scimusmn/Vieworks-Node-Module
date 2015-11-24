@@ -60,6 +60,7 @@ include([], function() {
     this.setVolume = function(vol) {
       this.volume = vol;
       this.eVolume = vol;
+
       //if the commanded volume is greater than 0, unmute the channel.
       if (this.volume > 0) muted = false;
       else muted = true;
