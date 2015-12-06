@@ -1,4 +1,4 @@
-include([], function() {
+﻿include([], function() {
   var serial = function() {
     var _this = this;
     this.port = '';
@@ -9,6 +9,7 @@ include([], function() {
     this.connect = function(partialName, cb) {
       chrome.serial.getDevices(function(ports) {
         for (var i = 0; i < ports.length; i++) {
+		console.log(ports[i]);
           if (ports[i].path.indexOf(partialName) > -1) {
             _this.port = ports[i].path;
             chrome.serial.connect(_this.port, {bitrate: 115200}, function(info) {
