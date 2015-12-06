@@ -14,14 +14,14 @@
             _this.port = ports[i].path;
             chrome.serial.connect(_this.port, {bitrate: 115200}, function(info) {
               _this.connectionId = info.connectionId;
-              setTimeout(cb,2000);
+              setTimeout(cb, 2000);
             });
 
             return;
           }
         }
 
-        console.log('Port not found');
+        console.log(partialName + ' not found');
       });
     };
 
@@ -52,11 +52,11 @@
     var onReceiveCallback = function(info) {
       if (info.connectionId == _this.connectionId && info.data) {
         var str = convertArrayBufferToString(info.data);
-        if (str.length > 1 && (str.charAt(str.length - 1) ==='\n'|| str.charAt(str.length - 1) ==='\n')) {
+        if (str.length > 1 && (str.charAt(str.length - 1) === '\n' || str.charAt(str.length - 1) === '\n')) {
           stringReceived += str.substring(0, str.length - 1);
           _this.messageCallback(stringReceived);
           stringReceived = '';
-        } else if(str.charAt(str.length - 1) !=='\n' || str.charAt(str.length - 1) !=='\r'){
+        } else if (str.charAt(str.length - 1) !== '\n' || str.charAt(str.length - 1) !== '\r') {
           stringReceived += str;
         }
       }
@@ -242,7 +242,6 @@
     */
 
     this.serial = null;
-
 
     this.onMessage = function(msg) {
       if (msg.length >= 1) {
