@@ -398,9 +398,13 @@ include([], function() {
   /////////////////////////////////////////////////////////////
 
   var hardWare = inheritFrom(webArduino, function() {
+
+    this.onConnect = function() {};
+
     // function to call when the websocket server connects to the serial port.
     this.serialOpenCB = function() {
       console.log('opened serial');
+      this.onConnect();
       this.ready = true;
       var _this = this;
       this.onReady();
