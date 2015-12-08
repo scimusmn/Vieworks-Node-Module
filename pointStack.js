@@ -68,6 +68,12 @@ function pointStack(maxPnts) {
     return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
 
   };
+    
+    points.clear = function() {
+        points.length = 0;
+        sampsX.clear();
+        sampsY.clear();
+    }
 
   return points;
 }
