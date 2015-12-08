@@ -182,23 +182,31 @@ function aveCont(points) {
   this.ave = 0;
   var ind = 0;
   var tot = 0;
-  for (var i = 0; i < points; i++) {
-    samps.push(0.0);
-  }
+  //for (var i = 0; i < points; i++) {
+  //  samps.push(0.0);
+  //}
 
   this.changeNumSamps = function(num) {
     samps.length = 0;
-    for (var i = 0; i < num; i++) {
-      samps.push(0.0);
-    }
+    //for (var i = 0; i < num; i++) {
+    //  samps.push(0.0);
+    //}
+    points = num;
   };
+    
+  this.clear = function(){
+    samps.length = 0;
+    
+  }
 
   this.addSample = function(val) {
-    tot -= samps[ind];
-    samps[ind] = val;
+    if(samps.length>=points){
+      tot -= samps[ind];
+      samps[ind] = val;
+    } else samps.push(val);
     tot += val;
     this.ave = tot / samps.length;
-    ind = (ind + 1) % samps.length;
+    ind = (ind + 1) % points;
     return this.ave;
   };
 
