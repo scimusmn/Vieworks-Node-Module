@@ -53,7 +53,7 @@ function pointStack(maxPnts) {
 
   points.hasMoved = function(pnt) {
 
-    return (Math.abs(pnt.x - points.last().x) > .003 || Math.abs(pnt.y - points.last().y) > .003);
+    return (Math.abs(pnt.x - points.last().x) > .005 || Math.abs(pnt.y - points.last().y) > .005);
 
   };
 
