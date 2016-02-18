@@ -1,17 +1,16 @@
-include([], function() {
+﻿include([], function() {
   var serial = function() {
     var _this = this;
     this.port = '';
     this.connectionId = null;
 
-    console.log(chrome.serial);
-
     this.connect = function(partialName, cb) {
       chrome.serial.getDevices(function(ports) {
         for (var i = 0; i < ports.length; i++) {
+          console.log(ports[i].path);
           if (ports[i].path.indexOf(partialName) > -1) {
             _this.port = ports[i].path;
-            chrome.serial.connect(_this.port, {bitrate: 115200}, function(info) {
+            chrome.serial.connect(_this.port, { bitrate: 115200 }, function(info) {
               _this.connectionId = info.connectionId;
               setTimeout(cb, 2000);
             });
@@ -20,7 +19,7 @@ include([], function() {
           }
         }
 
-        console.log('Port not found');
+        console.log(partialName + ' not found');
       });
     };
 
@@ -144,7 +143,8 @@ include([], function() {
 
     var START = 128;
     var DIGI_READ = 0;
-    var DIGI_WRITE = 32;  //pins 2-13
+    var DIGI_WRITE = 32;  //pins 2-15
+    var DIGI_WRITE_2 = 24; //pins 16-19
     var ANA_READ = 64;
     var DIGI_WATCH_2 = 72; //pins 14-19
     var ANA_REPORT = 80;
@@ -159,7 +159,7 @@ include([], function() {
      For Digital Read:
                         Byte 1
              _______________________________
-            | 1 | 0 | 0 | D | D | 2 | 1 | 0 |
+            | 1 | 0 | 0 | D | D | D | D | D |
              -------------------------------
 
              D: bits representing pin number to read
@@ -181,11 +181,21 @@ include([], function() {
 
             D: bits representing the pin number (14-19 [but minus 14]) to watch
 
-    For Digital Write on pins 2-13:
+    For Digital Write on pins 2-15:
                        Byte 1
              _______________________________
             | 1 | 0 | 1 | P | P | P | P | S |
              -------------------------------
+
+            P: bits representing pin number to read
+            S: bit indicating pin state
+
+        OR, for pins 16-19:
+
+                    Byte 1
+            _______________________________
+            | 1 | 0 | 0 | 1 | 1 | P | P | S |
+            -------------------------------
 
             P: bits representing pin number to read
             S: bit indicating pin state
@@ -243,7 +253,9 @@ include([], function() {
     this.serial = null;
 
     this.onMessage = function(msg) {
-      if (msg.length >= 1) {
+      if (~msg.indexOf('init')) {
+        this.init();
+      } else if (msg.length >= 1) {
         for (var i = 0; i < msg.length; i++) {
           var chr = msg.charCodeAt(i);
           if (chr & ANA_READ) {  //if the packet is analogRead
@@ -265,8 +277,10 @@ include([], function() {
     }
 
     this.digitalWrite = function(pin, state) {
-      if (pin <= 13) this.serial.write(asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
-      else console.log('Pin must be less than or equal to 13');
+      if (pin <= 15) this.serial.write(asChar(START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)));
+      else if (pin <= 19) this.serial.write(asChar(START + DIGI_WRITE_2 + ((pin - 16) << 1) + (state & 1)));
+
+      //else console.log('Pin must be less than or equal to 13');
     };
 
     this.digitalRead = function(pin) {
@@ -314,6 +328,8 @@ include([], function() {
       this.ready = true;
       this.onReady();
     };
+
+    this.init = function() {};
 
     this.createdCallback = function() {
     };
@@ -398,10 +414,11 @@ include([], function() {
   /////////////////////////////////////////////////////////////
 
   var hardWare = inheritFrom(webArduino, function() {
-    // function to call when the websocket server connects to the serial port.
-    this.serialOpenCB = function() {
-      console.log('opened serial');
-      this.ready = true;
+
+    this.onConnect = function() {};
+
+    this.init = function() {
+      console.log('initialize hardware');
       var _this = this;
       this.onReady();
       var inputs = [].slice.call(this.querySelectorAll('in-put'));
@@ -431,6 +448,14 @@ include([], function() {
           });
         }
       });
+    };
+
+    // function to call when the websocket server connects to the serial port.
+    this.serialOpenCB = function() {
+      console.log('opened serial');
+      this.onConnect();
+      this.ready = true;
+      this.init();
     };
 
     this.createdCallback = function() {
