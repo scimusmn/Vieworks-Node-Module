@@ -20,7 +20,7 @@ var configFile = inheritFrom(HTMLElement, function() {
 
     _this.onXMLLoad = function() {
       for (var i = 0; i < _this.loadFxns.length; i++) {
-        loadFxns[i]();
+        _this.loadFxns[i]();
       }
     };
 
@@ -32,7 +32,6 @@ var configFile = inheritFrom(HTMLElement, function() {
     var fileAddress = this.getAttribute('file');
     ajax(fileAddress, function(xml) {
       objectify(xml.firstChild, _this);
-      console.log('should fire on load');
       _this.onXMLLoad();
       _this.loaded = true;
     });
