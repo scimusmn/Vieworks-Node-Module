@@ -1,7 +1,7 @@
 include([], function() {
 
   var websocket = function() {
-    this.address = 'ws://localhost:80/';
+    this.address = 'ws://' + window.location.host + '/';
     this.connectInterval = null;
     this.serialport = '';
     var ws = null;
