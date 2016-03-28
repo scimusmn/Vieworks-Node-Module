@@ -5,9 +5,9 @@ include([], function() {
     this.connectInterval = null;
     this.serialport = '';
     var ws = null;
-    this.messageCallback = function(evt) {};
+    this.onMessage = function(evt) {};
 
-    this.connectCallback = function() {};
+    this.onConnect = function() {};
 
     this.send = function(msg) {};
 
@@ -19,9 +19,9 @@ include([], function() {
         {
           // Web Socket is connected, send data using send()
           clearInterval(_this.connectInterval);
-          _this.connectCallback();
+          _this.onConnect();
           ws.onmessage = function(evt) {
-            _this.messageCallback(evt);
+            _this.onMessage(evt);
           };
         };
 
