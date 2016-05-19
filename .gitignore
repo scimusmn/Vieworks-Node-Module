@@ -1,3 +1,11 @@
+build/*
+dll/*
+temp*/*
+test/*
+node_modules/*
+node_modules_old/*
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
