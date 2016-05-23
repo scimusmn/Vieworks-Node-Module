@@ -1,7 +1,9 @@
 build/*
 dll/*
-temp*/*
-test/*
+temp*
+test*
+sequences*/*
+celeb_seq*/*
 node_modules/*
 node_modules_old/*
 

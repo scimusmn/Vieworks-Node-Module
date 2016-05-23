@@ -5,7 +5,7 @@ var bufSize = 512;
 
 var onSerialOpen = function() {};
 
-function openBackend(portName) {
+function openBackend(portName,fxn) {
   console.log('Opening serialport ' + portName);
   var ser = new com.SerialPort(portName, {
     baudrate: 115200,
@@ -23,7 +23,8 @@ function openBackend(portName) {
     //if (webSock) webSock.send('sp=ack');
     sp.on('data', function(data) {
       //if (webSock) webSock.send(data);
-      console.log(data);
+      //console.log(data);
+      if(fxn) fxn(data);
     });
 
     sp.send = function(arr) {
@@ -55,18 +56,18 @@ function changeSevenSegment(digit) {
   ser.send([128, 192, 8, digit, 192, 129]);
 }
 
-function openSerial(portName) {
+function openSerial(portName,fxn) {
   if (portName[0] != '/')
     com.list(function(err, ports) {
       ports.forEach(function(port) {
         if (port.comName.indexOf(portName) > -1) {
           portName = port.comName;
-          openBackend(portName);
+          openBackend(portName,fxn);
         }
       });
     });
 
-  else openBackend(portName);
+  else openBackend(portName,fxn);
 }
 
 sp.open = openSerial;
@@ -185,8 +186,8 @@ var Arduino = function() {
 
   this.ws = null;
 
-  this.onMessage = function(evt) {
-    msg = evt.data;
+  this.onMessage = function(data) {
+    msg = data;
     if (msg.length >= 1) {
       for (var i = 0; i < msg.length; i++) {
         var chr = msg.charCodeAt(i);
@@ -251,6 +252,8 @@ var Arduino = function() {
 
   this.wireSend = function(adr, dataArr) {
     dataArr.unshift(128, 192, adr);
+    dataArr.push(192);
+    dataArr.push(129);
     sp.send(dataArr);
   };
 
@@ -263,7 +266,7 @@ var Arduino = function() {
 
   this.connect = function(portname, fxn) {
     onSerialOpen = fxn;
-    openSerial(portname);
+    openSerial(portname,_this.onMessage);
   };
 
   this.createdCallback = function() {

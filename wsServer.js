@@ -5,16 +5,18 @@
 var arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 
-arduino.connect('usb', function() {
+var cArr = [0,1,3,4,5,6];
+var cCount = 0;
+
+arduino.connect('COM11', function() {
   var i = 0;
-  var red = 0;
   var green = 1;
   setInterval(function() {
     arduino.digitalWrite(11, green);
-    arduino.digitalWrite(10, red);
-    red = !red;
+    arduino.digitalWrite(10, !green);
     green = !green;
-    arduino.wireSend(8, [i++]);
+    arduino.wireSend(8, [1<<cArr[cCount++]]);
+    if(cCount>=6) cCount = 0;
     if (i >= 10) i = 0;
   }, 100);
 });

@@ -58,6 +58,7 @@ class vwCam : public Nan::ObjectWrap {
   static void stop(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void save(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void capture(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void isCapturing(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void stopCapture(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static Nan::Persistent<v8::Function> constructor;

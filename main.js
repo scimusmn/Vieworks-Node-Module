@@ -1,8 +1,6 @@
-const electron = require('electron')
-var vieworks = require('bindings')('vieworks');
-var arduino = require('./arduino.js').arduino;
-var serial = require('./arduino.js').serial;
-var fs = require('fs');
+//require('require-rebuild')();
+
+const electron = require('electron');
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
@@ -14,13 +12,14 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 600, fullscreen: true})
 
+  mainWindow.setMenu(null);
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/app/index.html`)
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

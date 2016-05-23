@@ -38,6 +38,7 @@ void vwCam::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "save", save);
   Nan::SetPrototypeMethod(tpl, "capture", capture);
   Nan::SetPrototypeMethod(tpl, "stopCapture", stopCapture);
+  Nan::SetPrototypeMethod(tpl, "isCapturing", isCapturing);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("camera").ToLocalChecked(), tpl->GetFunction());
@@ -254,6 +255,11 @@ void vwCam::setFrameRate(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     cout << "Must open camera first" << endl;
   }
 
+}
+
+void vwCam::isCapturing(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+  info.GetReturnValue().Set(Nan::New((int)obj->bCapturing));
 }
 
 void vwCam::setImageGain(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -511,7 +517,8 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
   String::Utf8Value cmd(info[0]);
   string dir = (string(*cmd).length() ? string(*cmd) : "temp");
-  cout << dir << " or " << string(*cmd) << endl;
+  //dir = string(*cmd);
+  cout << dir << " equals " << string(*cmd) << endl;
 
   v8::Local<v8::Function> callb = info[1].As<v8::Function>();
 
@@ -522,10 +529,18 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
       int bpp=24;
       ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveBuffer, obj->buffer[i],  obj->width,obj->height );
 			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->liveBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
-			char name[256];
-			sprintf(name,"%s\\%03i.jpg",dir,i);
+      bmp = FreeImage_Rotate(bmp,270);
+      char name[256];
+			sprintf(name,"%s\\%03i.jpg",dir.c_str(),i);
+      cout << name << endl;
 			FREE_IMAGE_FORMAT fif = FIF_JPEG;
 			FreeImage_Save(fif, bmp, name, 0);
+      if(i==obj->buffer.storageNumber()/2){
+        FIBITMAP * thumb = FreeImage_Rescale(bmp,obj->height/4,obj->width/4);
+        sprintf(name,"%s\\thumb.jpg",dir.c_str());
+        FreeImage_Save(fif, thumb, name, 0);
+        if (thumb != NULL) FreeImage_Unload(thumb);
+      }
       saved++;
 			if (bmp != NULL){
 				FreeImage_Unload(bmp);
