@@ -1,9 +1,12 @@
+"use strict";
+
 var com = require('serialport');
 
-var serial = () => {
+var serial = function() {
   let bufSize = 512;
 
-  _this = this;
+  let _this = this;
+  let ser = null;
   _this.isOpen = false;
   _this.onConnect = () => {};
 
@@ -15,17 +18,18 @@ var serial = () => {
   };
 
   _this.open = (name, fxn) => {
+    console.log(name);
     if (name[0] != '/')
       com.list(function(err, ports) {
         ports.forEach(function(port) {
           if (port.comName.indexOf(name) > -1) {
             name = port.comName;
-            _this.open(name, fxn);
+            _this.openByName(name, fxn);
           }
         });
       });
 
-    else _this.open(name, fxn);
+    else _this.openByName(name, fxn);
   };
 
   _this.openByName = (portName, fxn) => {
@@ -39,8 +43,8 @@ var serial = () => {
 
     ser.on('open', function() {
       _this.isOpen = true;
-      sp.on('data', function(data) {
-        if (data = 'init') _this.onConnect();
+      ser.on('data', function(data) {
+        if (data == 'init') _this.onConnect();
         _this.onMessage(data);
       });
 
@@ -54,6 +58,7 @@ var serial = () => {
 };
 
 exports.serial = new serial();
+var sp = exports.serial;
 
 ////////////////////////////////////////////////////////
 
@@ -168,7 +173,7 @@ var Arduino = function() {
   this.ws = null;
 
   this.onMessage = function(data) {
-    msg = data;
+    let msg = data;
     if (msg.length >= 1) {
       for (var i = 0; i < msg.length; i++) {
         var chr = msg.charCodeAt(i);
@@ -249,7 +254,7 @@ var Arduino = function() {
     //onSerialOpen = fxn;
     //openSerial(portname, _this.onMessage);
     exports.serial.onConnect = fxn;
-    exports.serial.open(portname);
+    exports.serial.open(portname, _this.onMessage);
   };
 
   this.createdCallback = function() {

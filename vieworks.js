@@ -1,7 +1,9 @@
+"use strict";
+
 var vieworks = require('bindings')('vieworks');
 var arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
-var cfg = require('config.js');
+var cfg = require('./config.js').config;
 var fs = require('fs');
 
 var WebSocketServer = require('ws').Server;
@@ -44,14 +46,15 @@ var countdown = (count) => {
       console.log('done capturing');
       redLight(0);
       greenLight(1);
-      var dir = './sequences/temp' + dirNum++;
+      var dir = './app/sequences/temp' + dirNum++;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
 
       cam.save(dir, function() {
         //cam.stop();
-        if (webSock) webSock.send('seq=' + 'sequences/' + dir);
+        console.log('seq=' + 'sequences/temp' + (dirNum-1));
+        if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum-1));
         console.log('saved to ' + dir);
         cam.ready = true;
       });

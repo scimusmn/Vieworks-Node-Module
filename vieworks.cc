@@ -527,8 +527,9 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     int saved = 0;
     for (int i = 0; i < obj->buffer.storageNumber(); i++){
       int bpp=24;
-      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveBuffer, obj->buffer[i],  obj->width,obj->height );
-			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->liveBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
+      PBYTE buff = new BYTE[obj->bufferSize];;
+      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, buff, obj->buffer[i],  obj->width,obj->height );
+			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(buff, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
       bmp = FreeImage_Rotate(bmp,270);
       char name[256];
 			sprintf(name,"%s\\%03i.jpg",dir.c_str(),i);
@@ -545,6 +546,7 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 			if (bmp != NULL){
 				FreeImage_Unload(bmp);
 			}
+      if(buff) delete buff;
     }
     info.GetReturnValue().Set(Nan::New((int)1));
 	  if(saved ==  obj->buffer.storageNumber()){

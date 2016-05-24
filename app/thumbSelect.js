@@ -10,8 +10,7 @@ function setPointer(setName,flp){
 	var caps;
 
 	thumb.src = folderName+"/thumb.jpg?"+Math.random();
-	var folName = folderName.split('/');
-	thumb.id = folName[folName.length-1];
+	thumb.id = folderName;
 	thumb.className = "thumbnail";
 
 	thumb.onmousedown = function(){
@@ -192,8 +191,8 @@ function setGroup(flp,parent,rws,clm,asTable){
 
 	this.addOrChangeSet = function(setName){
 		console.log(setName);
-		var setFol = setName.split('/');
-		var set = setFol[setFol.length-1]
+		//var setFol = setName.split('/');
+		//var set = setFol[setFol.length-1]
 		if($(setName)){
 			$(setName).src = setName+"/thumb.jpg?"+Math.random();
 			for(var i=elements.length-1; i>1&&elements.length>1; i--){
@@ -204,6 +203,7 @@ function setGroup(flp,parent,rws,clm,asTable){
 			elements[0].appendChild($(setName));
 		}
 		else{
+			console.log(flipPlr);
 			var newSet = new setPointer(setName,flipPlr);
 			if(!visitorMode) newSet.setCelebMode(this);
 			var curNum = sets.length;
@@ -222,6 +222,8 @@ function setGroup(flp,parent,rws,clm,asTable){
 
 
 }
+
+console.log(visitorCaps);
 
 var visGroup = new setGroup(visitorCaps,$('thumbs'),3,7,true);
 var celebGroup = new setGroup(celebCaps,$('celebThumbs'),20,1,false);
