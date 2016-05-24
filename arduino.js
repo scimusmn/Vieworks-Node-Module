@@ -1,6 +1,6 @@
 var com = require('serialport');
 
-var serial = ()=> {
+var serial = () => {
   let bufSize = 512;
 
   _this = this;
