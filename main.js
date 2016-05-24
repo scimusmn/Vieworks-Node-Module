@@ -1,4 +1,11 @@
 //require('require-rebuild')();
+"use strict";
+
+/*var vieworks = require('bindings')('vieworks');
+var arduino = require('./arduino.js').arduino;
+var serial = require('./arduino.js').serial;*/
+
+require('./vieworks.js');
 
 const electron = require('electron');
 // Module to control application life.
@@ -20,6 +27,8 @@ function createWindow () {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
+
+  console.log('here');
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

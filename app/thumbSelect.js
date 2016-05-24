@@ -193,15 +193,15 @@ function setGroup(flp,parent,rws,clm,asTable){
 	this.addOrChangeSet = function(setName){
 		console.log(setName);
 		var setFol = setName.split('/');
-		var set = setFol[setFol.length-1];
-		if($(set)){
-			$(set).src = setName+"/thumb.jpg?"+Math.random();
+		var set = setFol[setFol.length-1]
+		if($(setName)){
+			$(setName).src = setName+"/thumb.jpg?"+Math.random();
 			for(var i=elements.length-1; i>1&&elements.length>1; i--){
 				elements[i].innerHTML=elements[i-1].innerHTML;
 				this.rebindByElementChild(elements[i]);
 			}
 			elements[0].innerHTML='';
-			elements[0].appendChild($(set));
+			elements[0].appendChild($(setName));
 		}
 		else{
 			var newSet = new setPointer(setName,flipPlr);

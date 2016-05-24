@@ -25,10 +25,10 @@ function wsClient(){
 
 		switch(evt.data.split("=")[0]){
 			case "seq":
-				visGroup.addOrChangeSet("../"+evt.data.split("=")[1]);
+				visGroup.addOrChangeSet(evt.data.split("=")[1]);
 				break;
 			case "cel":
-				celebGroup.addOrChangeSet("../"+evt.data.split("=")[1]);
+				celebGroup.addOrChangeSet(evt.data.split("=")[1]);
 				break;
 			default:
 				break;

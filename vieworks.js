@@ -42,7 +42,7 @@ var countdown = (count) => {
       console.log("done capturing");
       redLight(0);
       greenLight(1);
-      var dir = './sequences/temp'+dirNum++;
+      var dir = './app/sequences/temp'+dirNum++;
       if(!fs.existsSync(dir)){
         fs.mkdirSync(dir)
       }
@@ -62,17 +62,7 @@ arduino.connect('COM11', function() {
   var red = 0;
   var green = 1;
   setTimeout(()=>{
-    setInterval(function() {
-      /*arduino.digitalWrite(11, green);
-      arduino.digitalWrite(10, red);
-      red = !red;
-      green = !green;
-      //arduino.wireSend(8, [i++]);
-      if (i >= 10) i = 0;*/
-      //arduino.digitalRead(12);
-    }, 100);
-
-    arduino.watchPin(12,function (pin,state) {
+      arduino.watchPin(12,function (pin,state) {
       console.log(state);
       if(!cam.isCapturing()&&!state){
         countdown(9);
@@ -91,29 +81,6 @@ cam.start();
 
 var dirNum = 0;
 
-/*setInterval(function () {
-  cam.capture();
-  console.log("start capture");
-
-  setTimeout(function () {
-    cam.stopCapture();
-    console.log("done capturing");
-    var dir = './sequences/temp'+dirNum++;
-    if(!fs.existsSync(dir)){
-      fs.mkdirSync(dir)
-    }
-    cam.save(dir,function(){
-      //cam.stop();
-      if(webSock) webSock.send("seq="+"sequences/"+dir);
-      console.log("saved to " + dir);
-    });
-    //cam.stop();
-    //serial.close();
-  }, 1500);
-}, 30000);*/
-
-
-
 ///////////////////////////////////////////////////////////////////////
 
 function readDir(path){
@@ -125,8 +92,6 @@ function readDir(path){
 	for(var i=0; i<files.length; i++){
 		files[i]=path+files[i];
 	}
-
-
 
 	return files;
 }
@@ -158,15 +123,15 @@ wss.on('connection', function(ws) {
 });
 
 function onOpen(){
-	var files = readDir("sequences/");
-	var celFiles = readDir("celeb_seq/");
+	var files = readDir("app/sequences/");
+	var celFiles = readDir("app/celeb_seq/");
 	if(webSock){
 		for(var i=0; i<files.length; i++){
       console.log(files[i]);
-			webSock.send("seq="+files[i]);
+			webSock.send("seq=../"+files[i]);
 		}
 		for(var i=0; i<celFiles.length; i++){
-			webSock.send("cel="+celFiles[i]);
+			webSock.send("cel=../"+celFiles[i]);
 		}
 	}
 }
