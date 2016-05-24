@@ -1,78 +1,59 @@
-var sp = {};
-
 var com = require('serialport');
-var bufSize = 512;
 
-var onSerialOpen = function() {};
+var serial = ()=> {
+  let bufSize = 512;
 
-function openBackend(portName,fxn) {
-  console.log('Opening serialport ' + portName);
-  var ser = new com.SerialPort(portName, {
-    baudrate: 115200,
-    parser: com.parsers.readline('\r\n', 'binary'),
-    buffersize:bufSize,
-  });
+  _this = this;
+  _this.isOpen = false;
+  _this.onConnect = () => {};
 
-  function asChar(val) {
-    return String.fromCharCode(val);
-  }
+  _this.onMessage = () => {};
 
-  ser.on('open', function() {
-    sp = ser;
+  _this.send = (arr) => {
+    arr.push(124);
+    if (_this.isOpen) ser.write(new Buffer(arr));
+  };
 
-    //if (webSock) webSock.send('sp=ack');
-    sp.on('data', function(data) {
-      //if (webSock) webSock.send(data);
-      //console.log(data);
-      if(fxn) fxn(data);
-    });
-
-    sp.send = function(arr) {
-      arr.push(124);
-      ser.write(new Buffer(arr));
-    };
-
-    onSerialOpen();
-
-    /*var i = 0;
-    setInterval(function() {
-      //ser.write(asChar(128) + asChar(192) + asChar(8) + asChar(i++) + asChar(129) + '|');
-      //ser.write(new Buffer([128, 192, 8, i++, 192, 129, 124]));
-      ser.send([128, 192, 8, i++, 192, 129]);
-      if (i >= 9) i = 0;
-    }, 1000);*/
-  });
-
-  ser.on('error', function() {
-    console.log('Error from SerialPort');
-    sp = null;
-    if (webSock) webSock.send('sp=err');
-  });
-}
-
-function changeSevenSegment(digit) {
-  //128 sets control mode, 192 specifies I2C, 8 is the address,followed by data
-  //once data is finished, send 192 to close I2C, 129 to return to normal mode.
-  ser.send([128, 192, 8, digit, 192, 129]);
-}
-
-function openSerial(portName,fxn) {
-  if (portName[0] != '/')
-    com.list(function(err, ports) {
-      ports.forEach(function(port) {
-        if (port.comName.indexOf(portName) > -1) {
-          portName = port.comName;
-          openBackend(portName,fxn);
-        }
+  _this.open = (name, fxn) => {
+    if (name[0] != '/')
+      com.list(function(err, ports) {
+        ports.forEach(function(port) {
+          if (port.comName.indexOf(name) > -1) {
+            name = port.comName;
+            _this.open(name, fxn);
+          }
+        });
       });
+
+    else _this.open(name, fxn);
+  };
+
+  _this.openByName = (portName, fxn) => {
+    if (fxn) _this.onMessage = fxn;
+    console.log('Opening serialport ' + portName);
+    ser = new com.SerialPort(portName, {
+      baudrate: 115200,
+      parser: com.parsers.readline('\r\n', 'binary'),
+      buffersize:bufSize,
     });
 
-  else openBackend(portName,fxn);
-}
+    ser.on('open', function() {
+      _this.isOpen = true;
+      sp.on('data', function(data) {
+        if (data = 'init') _this.onConnect();
+        _this.onMessage(data);
+      });
 
-sp.open = openSerial;
+    });
 
-exports.serial = sp;
+    ser.on('error', function() {
+      console.log('Error from SerialPort');
+      sp = null;
+    });
+  };
+};
+
+exports.serial = new serial();
 
 ////////////////////////////////////////////////////////
 
@@ -265,8 +246,10 @@ var Arduino = function() {
   };
 
   this.connect = function(portname, fxn) {
-    onSerialOpen = fxn;
-    openSerial(portname,_this.onMessage);
+    //onSerialOpen = fxn;
+    //openSerial(portname, _this.onMessage);
+    exports.serial.onConnect = fxn;
+    exports.serial.open(portname);
   };
 
   this.createdCallback = function() {
