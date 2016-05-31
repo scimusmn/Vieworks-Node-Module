@@ -1,3 +1,4 @@
+
 "use strict";
 
 var vieworks = require('bindings')('vieworks');
@@ -12,18 +13,31 @@ var webSock = null;
 
 var cam = new vieworks.camera(10);
 
+var cState = false;
+
 var greenLight = (state) => {
-  arduino.digitalWrite(11, state);
+  arduino.digitalWrite(10, state);
 };
 
 var redLight = (state) => {
-  arduino.digitalWrite(10, state);
+  arduino.digitalWrite(11, state);
 };
+
+var save = (dir) => {
+  cam.save(dir, function() {
+    //cam.stop();
+    console.log('seq=' + 'sequences/temp' + (dirNum-1));
+    if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum-1));
+    console.log('saved to ' + dir);
+    cam.ready = true;
+  });
+}
 
 var cInt = null;
 
 var cArr = [0, 1, 3, 4, 5, 6];
-var cCount = 0;
+//var cArr = [1, 3, 11, 27, 59, 123];
+var cCount = 1;
 
 var countdown = (count) => {
   if (count > 0) {
@@ -33,9 +47,9 @@ var countdown = (count) => {
     setTimeout(() => { countdown(count - 1); }, 1000);
   } else {
     cInt = setInterval(() => {
-      arduino.wireSend(8, [1 << cArr[cCount++]]);
-      if (cCount >= 6) cCount = 0;
-    }, 100);
+      arduino.wireSend(8, [128*(cCount)]);
+      cCount = !cCount;
+    }, cfg.recordTime/12);
     cam.capture();
     console.log('start capture');
 
@@ -49,18 +63,18 @@ var countdown = (count) => {
       var dir = './app/sequences/temp' + dirNum++;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
+        save(dir);
+      } else {
+        var exec = require('child_process').exec;
+        exec('rm -r'+dir, ()=>{
+          //fs.mkdirSync(dir);
+          save(dir);
+        });
       }
 
-      cam.save(dir, function() {
-        //cam.stop();
-        console.log('seq=' + 'sequences/temp' + (dirNum-1));
-        if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum-1));
-        console.log('saved to ' + dir);
-        cam.ready = true;
-      });
 
-      //cam.stop();
-      //serial.close();
+
+      cState = false;
     }, cfg.recordTime);
   }
 };
@@ -73,6 +87,10 @@ arduino.connect(cfg.portName, function() {
       cam.ready = false;
       countdown(9);
     }
+    /*if (!cState && !state){
+      countdown(9);
+      cState = true;
+    }*/
   });
 
   //},3000);

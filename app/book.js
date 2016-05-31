@@ -1,5 +1,3 @@
-//this is a rudimentary way of creating classes in javascript. referred to as a singleton.
-	//this is essentially a one-off class- you can also name the function and use that to create individual instances of the class
 
 'use strict';
 
@@ -46,6 +44,12 @@
 
 		var imageLoaded = 1;
 
+		var procesImages = () => {
+			for (let x = numImg-1; x >=0; x--) {
+				if(tiles[x].deleteMe) tiles.pop();
+			}
+		}
+
 		this.init=function(){
 			bLoading = true;
 			notLoadedImg.src = "assets/pngs/imageFrame.png";
@@ -54,10 +58,26 @@
 			imageLoaded = 0;
 			canvas.width=canvas.width;			//this clears the html5 canvas, for some reason
 
-			for (x = 1; x <= numImg; x++) {
-				var imageObj = new Image(); 											// new instance for each image
-				imageObj.src = imgDir+pad(x,3)+".jpg?"+Math.random();					//generate a unique name for each image, so it doesn't cache
-				tiles.push(imageObj);													//push the new image into the array of images.
+			let track =0;
+
+			for (let x = 1; x <= numImg; x++) {
+				let imageObj = new Image(); 											// new instance for each image
+				tiles.push(imageObj);
+				imageObj.src = imgDir+pad(x,3)+".jpg?";					//set the location.
+
+				imageObj.onload = () => {
+					track++;
+					console.log('load');
+					if(track==numImg) procesImages();
+				}
+				imageObj.onerror = (evt) => {
+					evt.preventDefault();
+					track++;
+					imageObj.deleteMe = true;
+					//console.log('oops');
+					if(track==numImg) procesImages();
+				}
+
 			}
 		};
 
@@ -83,7 +103,7 @@
 		}
 
 		this.drawFrame=function(){			//display image
-			if(bLoaded){
+			/*if(bLoaded){
 				canvas.width = canvas.width;
 				ctx.fillStyle = "rgb(170,170,170)";
 				ctx.fillRect (0,0,canvas.width,canvas.height);
@@ -100,9 +120,23 @@
 						tiles.length--;
 					}
 				}
-				if(numComp>=tiles.length&&numComp) bLoading=false,bLoaded=true;
+				if(numComp>=tiles.length/2&&numComp) bLoading=false,bLoaded=true;
 
 				canvas.width = canvas.width;
+				ctx.fillStyle = "rgb(170,170,170)";
+				ctx.fillRect (0,0,canvas.width,canvas.height);
+				ctx.drawImage(notLoadedImg, imgPad/2,imgPad/2);
+			}*/
+			if(tiles.length&&tiles[nDisp].complete){
+				canvas.width=tiles[nDisp].width+imgPad;
+				canvas.height=tiles[nDisp].height+imgPad;
+				ctx.fillStyle = "rgb(170,170,170)";
+				ctx.fillRect (0,0,canvas.width,canvas.height);
+				ctx.drawImage(tiles[nDisp], imgPad/2,imgPad/2);
+
+			} else {
+				canvas.width=notLoadedImg.width+imgPad;
+				canvas.height=notLoadedImg.height+imgPad;
 				ctx.fillStyle = "rgb(170,170,170)";
 				ctx.fillRect (0,0,canvas.width,canvas.height);
 				ctx.drawImage(notLoadedImg, imgPad/2,imgPad/2);
@@ -110,11 +144,12 @@
 		};
 
 		this.idle=function(){						//increment the image pointer, if we are playing
-			if(bPlaying&&nDisp<tiles.length-1){
+			if(bPlaying&&nDisp<tiles.length-1&&tiles[nDisp+1].complete){
+				//do {nDisp++} while(!tiles[nDisp].loaded||nDisp<tiles.length-1);
 				nDisp++;
 				imgSld.changeVal(nDisp/tiles.length);
 			}
-			else if(tiles.length-1<=nDisp){
+			else if(tiles.length-2<=nDisp){
 				bPlaying=false;
 			}
 		};
@@ -124,7 +159,7 @@
 		}
 
 		this.isLoaded = function(){
-			return bLoaded;
+			return tiles[nDisp].complete;
 		}
 
 		this.isLoading = function(){

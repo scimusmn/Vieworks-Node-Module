@@ -6,6 +6,7 @@ sequences*/*
 celeb_seq*/*
 node_modules/*
 node_modules_old/*
+app/src/vendor/*
 
 
 # Windows image file caches

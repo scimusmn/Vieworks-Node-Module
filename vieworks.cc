@@ -548,11 +548,11 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 			}
       if(buff) delete buff;
     }
-    info.GetReturnValue().Set(Nan::New((int)1));
 	  if(saved ==  obj->buffer.storageNumber()){
        cout << "Saved " << obj->buffer.storageNumber() << " frames. "<<endl;
        const unsigned argc = 1;
        v8::Local<v8::Value> argv[argc] = { Nan::New((int)saved) };
+       info.GetReturnValue().Set(Nan::New((int)obj->buffer.storageNumber()));
        Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callb, argc, argv);
     }
 	  else cout << "Error while saving: "<< result << endl;
