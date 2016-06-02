@@ -12,13 +12,22 @@
 
 <body class="main" oncontextmenu="return false;">
 <div style="width: 100%;">
-	<!-- <div id='mainTitle'>
-		<img src="assets/pngs/title.png">
+	<div id='topBar'>
+		<div>
+			<img id='mainTitle' src="assets/pngs/title.png">
+		</div>
+		<div>
+			<img id="fyv" src="assets/pngs/button1.png" onmousedown="fyvClickDown()" onmouseup="fyvClickUp()">
+		</div>
+		<div style="display: none">
+			<img id="jy" class="sideBySide" src="assets/pngs/button2.png" onmousedown="jyClickDown()" onmouseup="jyClickUp()">
+		</div>
+		<div>
+			<img id="sbs" class="justYou" src="assets/pngs/button3.png" onmousedown="sbsClickDown()" onmouseup="sbsClickUp()" >
+		</div>
 	</div>
 	<div class='playback'>
-		<img id="fyv" src="assets/pngs/button1.png" onmousedown="fyvClickDown()" onmouseup="fyvClickUp()">
-		<img id="jy" class="sideBySide" src="assets/pngs/button2.png" onmousedown="jyClickDown()" onmouseup="jyClickUp()" style="display: none">
-		<img id="sbs" class="justYou" src="assets/pngs/button3.png" onmousedown="sbsClickDown()" onmouseup="sbsClickUp()" >
+
 		<div id="visitor-caps" style="display: table-cell;"></div>
 		<div class="sideBySide" style="display: none; width: 153px;">
 			<img id="playBoth" src="assets/pngs/playBoth-active.png" onmousedown="pbClickDown()"></img>
@@ -35,8 +44,8 @@
 		</div>
 	<div class='select'>
 		<div id="thumbs"></div>
-	</div> -->
-<table id="mainTable">
+	</div>
+<!-- <table id="mainTable">
 	<tr>
 		<td >
 		<table >
@@ -90,7 +99,7 @@
 		<td id="thumbs">
 		</td>
 	</tr>
-</table>
+</table> -->
 
 </div>
 

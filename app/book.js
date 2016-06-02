@@ -1,7 +1,9 @@
 
 'use strict';
 
-	function flipbook(cntnr){
+include([], function() {
+
+	window.flipbook = function (cntnr){
 
 	//Grab the canvas and context in which we are drawing
 		var cntDiv = cntnr;
@@ -63,7 +65,7 @@
 			for (let x = 1; x <= numImg; x++) {
 				let imageObj = new Image(); 											// new instance for each image
 				tiles.push(imageObj);
-				imageObj.src = imgDir+pad(x,3)+".jpg?";					//set the location.
+				imageObj.src = imgDir+zeroPad(x,3)+".jpg";					//set the location.
 
 				imageObj.onload = () => {
 					track++;
@@ -209,7 +211,7 @@
 			this.init();
 		}
 	};
-
+});
 	//var book = new flipbook($("visitor-caps"));
 
 	//setInterval(book.drawFrame,50);

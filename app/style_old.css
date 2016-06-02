@@ -20,20 +20,6 @@ table {
 	text-align: center;
 }
 
-#topBar {
-	width: 100%;
-	height: 20%;
-}
-
-#topBar > div {
-	display: inline-block;
-	width: 33%;
-}
-
-#fyv {
-
-}
-
 #visitor-caps{
 	width:600px;
 	text-align: center;
@@ -89,7 +75,7 @@ table {
 	overflow-y: hidden;
 }
 
-#celebContainer > thumb-nail {
+#celebThumbs > thumb-nail {
 	width: 100%;
 	height:25%;
 }

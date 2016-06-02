@@ -1,6 +1,9 @@
 function wsClient(){
+	var _this = this;
 	var ws;
 	var connectInterval;
+
+	this.onMessage = function(evt){};
 
 	this.connect = function(){
 		if ("WebSocket" in window) ws = new WebSocket("ws://localhost:8080/"); //ws://echo.websocket.org is the default testing server
@@ -22,17 +25,9 @@ function wsClient(){
     ws.onmessage = function (evt) {
 		//var received_msg = evt.data;
 		//alert("Message is received... " + received_msg);
+		console.log(evt.data);
 
-		switch(evt.data.split("=")[0]){
-			case "seq":
-				visGroup.addOrChangeSet(evt.data.split("=")[1]);
-				break;
-			case "cel":
-				celebGroup.addOrChangeSet(evt.data.split("=")[1]);
-				break;
-			default:
-				break;
-		}
+		_this.onMessage(evt);
     };
 
 	this.setMsgCallback = function(cb){
@@ -47,4 +42,4 @@ function wsClient(){
 
 }
 
-var webSockClient = new wsClient();
+window.webSockClient = new wsClient();

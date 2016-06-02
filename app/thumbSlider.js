@@ -2,7 +2,7 @@ function thumbSlider(bg,thmDiv){
 	var bgDiv = bg;
 
 	var handle = document.createElement('img');
-	handle.src = src="assets/pngs/vertScrollLever.png";
+	handle.src ="assets/pngs/vertScrollLever.png";
 	handle.className = "slider-handle";
 	bgDiv.appendChild(handle);
 
@@ -34,4 +34,4 @@ function thumbSlider(bg,thmDiv){
 	};
 };
 
-var thmSlider = new thumbSlider($('celebThumbSlider'),$('celebContainer'));
+var thmSlider = new thumbSlider(µ('#celebThumbSlider'),µ('#celebContainer'));

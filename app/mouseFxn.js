@@ -5,7 +5,7 @@ var drag = new function (){
 	var offsetY = 0;
 	var Element;           // needs to be passed from OnMouseDown to OnMouseMove
 	var oldZIndex = 0;         // we temporarily increase the z-index during drag
-	//var _debug = $('debug');    // makes life easier
+	//var _debug = µ('debug');    // makes life easier
 
 	this.setByEventAndObj = function(e,obj){
 		// grab the mouse position
@@ -123,7 +123,7 @@ function OnMouseUp(e)
 }
 
 function fyvClickDown(){
-	$('fyv').src="assets/pngs/Button1-active.png";
+	µ('#fyv').src="assets/pngs/Button1-active.png";
 }
 
 var refreshTimer;
@@ -144,13 +144,13 @@ function fyvClickUp(){
 		if(window.stop !== undefined) window.stop();
 		else if(document.execCommand !== undefined) document.execCommand("Stop", false);
 
-		$('fyv').src="assets/pngs/Button1.png";
-		var selEl = $('.select');
+		µ('#fyv').src="assets/pngs/Button1.png";
+		var selEl = µ('.select');
 		for(var i=0; i<selEl.length; i++){
 			selEl[i].style.display = "table-row";
 		}
-		for(var i=0; i<$('.playback').length; i++){
-			$('.playback')[i].style.display="none";
+		for(var i=0; i<µ('.playback').length; i++){
+			µ('.playback')[i].style.display="none";
 		}
 		jyClickUp();
 	}
@@ -158,35 +158,35 @@ function fyvClickUp(){
 }
 
 function jyClickDown(){
-	$('jy').src="assets/pngs/Button2-active.png";
+	µ('#jy').src="assets/pngs/Button2-active.png";
 }
 
 function jyClickUp(){
 	celebCaps.unload();
 	celebCaps.setDrawInterval();
 
-	$('jy').src="assets/pngs/Button2.png";
-	var selEl = $('.justYou');
+	µ('#jy').src="assets/pngs/Button2.png";
+	var selEl = µ('.justYou');
 	for(var i=0; i<selEl.length; i++){
 		selEl[i].style.display = "table-cell";
 	}
-	for(var i=0; i<$('.sideBySide').length; i++){
-		$('.sideBySide')[i].style.display="none";
+	for(var i=0; i<µ('.sideBySide').length; i++){
+		µ('.sideBySide')[i].style.display="none";
 	}
 }
 
 function sbsClickDown(){
-	$('sbs').src="assets/pngs/Button3-active.png";
+	µ('#sbs').src="assets/pngs/Button3-active.png";
 }
 
 function sbsClickUp(){
-	$('sbs').src="assets/pngs/Button3.png";
-	var selEl = $('.sideBySide');
+	µ('#sbs').src="assets/pngs/Button3.png";
+	var selEl = µ('.sideBySide');
 	for(var i=0; i<selEl.length; i++){
 		selEl[i].style.display = "table-cell";
 	}
-	for(var i=0; i<$('.justYou').length; i++){
-		$('.justYou')[i].style.display="none";
+	for(var i=0; i<µ('.justYou').length; i++){
+		µ('.justYou')[i].style.display="none";
 	}
 
 	//celebCaps.loadSet("default_2/");
@@ -196,14 +196,14 @@ var bothPlaying = false;
 
 function pbClickDown(){
 	if(bothPlaying){
-		$('playBoth').src = "assets/pngs/playboth-active.png"
+		µ('#playBoth').src = "assets/pngs/playboth-active.png"
 		visitorCaps.pause();
 		celebCaps.pause();
 		bothPlaying=false;
 	}
 	else {
 		bothPlaying=true;
-		$('playBoth').src = "assets/pngs/pauseboth.png"
+		µ('#playBoth').src = "assets/pngs/pauseboth.png"
 		visitorCaps.play();
 		celebCaps.play();
 	}
