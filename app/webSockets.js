@@ -6,7 +6,7 @@ function wsClient(){
 	this.onMessage = function(evt){};
 
 	this.connect = function(){
-		if ("WebSocket" in window) ws = new WebSocket("ws://localhost:8080/"); //ws://echo.websocket.org is the default testing server
+		if ("WebSocket" in window) ws = new WebSocket("ws://"+window.location.host+":8080/"); //ws://echo.websocket.org is the default testing server
 	}
 
 	this.connect();

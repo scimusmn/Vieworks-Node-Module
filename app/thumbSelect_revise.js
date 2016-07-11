@@ -42,7 +42,7 @@ var thumbnail = inheritFrom(HTMLElement, function() {
     console.log(attr);
     if (attr == 'setname') {
       console.log('setAttribute');
-      this.thumb.src = newVal.replace('-', '/') + '/thumb.jpg';
+      this.thumb.src = newVal.replace('-', '/') + '/thumb.jpg?'+Math.random();
       this.setName = newVal.replace('/', '-');
     }
   };

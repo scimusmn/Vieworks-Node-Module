@@ -7,6 +7,15 @@ var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
 var fs = require('fs');
 
+var express = require('express');
+var app = express();
+
+app.use(express.static('app'));
+
+app.listen(80, function(){
+  console.log('listening on 80');
+});
+
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
 var webSock = null;
@@ -15,13 +24,49 @@ var cam = new vieworks.camera(10);
 
 var cState = false;
 
-var greenLight = (state) => {
+var loopPractice = () => {
+  arduino.digitalWrite(9,0);
+  console.log('Loop practice');
+  setTimeout(()=>{
+    arduino.digitalWrite(9,1);
+  },100);
+}
+
+var showGo = () => {
+  arduino.digitalWrite(4,0);
+  console.log("Show go");
+  setTimeout(()=>{
+    arduino.digitalWrite(4,1);
+  },100);
+}
+
+var alternateVideo = () => {
+  arduino.digitalWrite(6,0);
+  setTimeout(()=>{
+    arduino.digitalWrite(6,1);
+  },100);
+}
+
+var greenExitLight = (state) => {
+  arduino.digitalWrite(11, state);
+};
+
+var redExitLight = (state) => {
   arduino.digitalWrite(10, state);
 };
 
-var redLight = (state) => {
-  arduino.digitalWrite(11, state);
+var greenEntranceLight = (state) => {
+  arduino.digitalWrite(3, state);
+  if(state) showGo();
 };
+
+var redEntranceLight = (state) => {
+  arduino.digitalWrite(5, state);
+  if(state) loopPractice();
+};
+
+
+var justRecorded = false;
 
 var save = (dir) => {
   cam.save(dir, function() {
@@ -33,34 +78,62 @@ var save = (dir) => {
   });
 }
 
-var cInt = null;
+var pollLight = new function(){
+  var cInt = null;
 
-var cArr = [0, 1, 3, 4, 5, 6];
-//var cArr = [1, 3, 11, 27, 59, 123];
-var cCount = 1;
+  //64=red, 2 = y1, 1 = y2, 16=y3 32=g
+  //var cArr = [64,2,1,16,32,115];
+  //var cArr = [64,66,67,83,115,115];
+  var cArr = [115,83,67,66,64,64];
+  //var cArr = [1, 3, 11, 27, 59, 123];
+  var cCount = 0;
+
+  this.setGreen = function(){
+    arduino.wireSend(8,[32]);
+  }
+
+  this.setRed = function(){
+    arduino.wireSend(8,[64]);
+  }
+
+  this.setStage = function(count){
+    //arduino.wireSend(8,[0]);
+    //setInterval(()=>{
+      arduino.wireSend(8,[cArr[count]]);
+      //if(++cCount>=6) cCount = 0;
+    //},500);
+  }
+
+  this.blink = function () {
+    cCount = 1;
+    cInt = setInterval(()=>{
+      arduino.wireSend(8,[115*cCount]);
+      cCount=!cCount;
+    },500);
+  }
+
+  this.stopBlink = function () {
+    clearInterval(cInt);
+  }
+}
 
 var countdown = (count) => {
+  pollLight.setStage(count);
   if (count > 0) {
-    greenLight(0);
-    redLight(1);
-    arduino.wireSend(8, [128 + count]);
     setTimeout(() => { countdown(count - 1); }, 1000);
   } else {
-    cInt = setInterval(() => {
-      arduino.wireSend(8, [128*(cCount)]);
-      cCount = !cCount;
-    }, cfg.recordTime/12);
+    pollLight.blink();
     cam.capture();
     console.log('start capture');
 
     setTimeout(function() {
-      clearInterval(cInt);
-      arduino.wireSend(8, [0]);
+      pollLight.stopBlink();
+      pollLight.setRed();
       cam.stopCapture();
       console.log('done capturing');
-      redLight(0);
-      greenLight(1);
       var dir = './app/sequences/temp' + dirNum++;
+      greenExitLight(1);
+      redExitLight(0);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
         save(dir);
@@ -81,18 +154,62 @@ var countdown = (count) => {
 
 arduino.connect(cfg.portName, function() {
   //setTimeout(()=>{
+  pollLight.setStage(4);
+
   arduino.watchPin(12, function(pin, state) {
-    console.log(state);
-    if (!cam.isCapturing() && !state && cam.ready) {
+    console.log(state + " is the current state");
+    if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
+      justRecorded = true;
       cam.ready = false;
-      countdown(9);
+      countdown(4);
+      greenExitLight(0);
+      redExitLight(0);
+      greenEntranceLight( 0);
+      redEntranceLight( 1);
     }
+
     /*if (!cState && !state){
       countdown(9);
       cState = true;
     }*/
   });
 
+  arduino.watchPin(8, function(pin, state) {
+    console.log(state + " is the current state");
+    if (state) {
+      setTimeout(()=>{
+        greenExitLight(0);
+        redExitLight(1);
+        greenEntranceLight( 0);
+        redEntranceLight( 1);
+      },1000);
+    }
+  });
+
+  arduino.watchPin(7, function(pin, state) {
+    console.log(state + " is the current state on "+ pin);
+    if (state) {
+      setTimeout(()=>{
+        justRecorded = false;
+        greenExitLight(0);
+        redExitLight(1);
+        greenEntranceLight( 1);
+        redEntranceLight( 0);
+        pollLight.setStage(4)
+      },1000);
+    }
+  });
+
+  console.log('arduino start')
+
+  arduino.digitalWrite(9,1);
+  arduino.digitalWrite(6,1);
+  arduino.digitalWrite(4,1);
+
+  greenExitLight(0);
+  redExitLight(1);
+  greenEntranceLight( 1);
+  redEntranceLight( 0);
   //},3000);
 
 });
