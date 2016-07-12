@@ -5,7 +5,6 @@
 var arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;*/
 
-require('./vieworks.js');
 
 const electron = require('electron');
 // Module to control application life.

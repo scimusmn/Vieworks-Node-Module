@@ -84,7 +84,8 @@ var pollLight = new function(){
   //64=red, 2 = y1, 1 = y2, 16=y3 32=g
   //var cArr = [64,2,1,16,32,115];
   //var cArr = [64,66,67,83,115,115];
-  var cArr = [115,83,67,66,64,64];
+  //var cArr = [115,83,67,66,64,64];
+  var cArr = [51,19,3,2,0,0];
   //var cArr = [1, 3, 11, 27, 59, 123];
   var cCount = 0;
 
@@ -161,9 +162,9 @@ arduino.connect(cfg.portName, function() {
     if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
       justRecorded = true;
       cam.ready = false;
-      countdown(4);
+      countdown(5);
       greenExitLight(0);
-      redExitLight(0);
+      redExitLight(1);
       greenEntranceLight( 0);
       redEntranceLight( 1);
     }
