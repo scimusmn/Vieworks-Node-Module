@@ -1,7 +1,7 @@
 
-"use strict";
+'use strict';
 
-var arduino = require('./arduino.js').arduino;
+/*var arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
 
@@ -83,11 +83,6 @@ arduino.connect(cfg.portName, function() {
       arduino.digitalWrite(3, 0);
       arduino.digitalWrite(5, 1);
     }
-
-    /*if (!cState && !state){
-      countdown(9);
-      cState = true;
-    }*/
   });
 
   arduino.watchPin(8, function(pin, state) {
@@ -123,4 +118,32 @@ arduino.connect(cfg.portName, function() {
   arduino.digitalWrite(5, 0);
   //},3000);
 
-});
+});*/
+
+/*var three = µ('#three');
+var two = µ('#two');
+var one = µ('#one');
+var go = µ('#go');*/
+
+let audio = [];
+
+for (var i = 0; i < 4; i++) {
+  audio.push(document.querySelector('#audio_' + (i + 1)));
+  audio[i].load();
+}
+
+let nextAudio = function(num) {
+  if (num < 4) {
+    audio[num].play();
+    console.log(num)
+    setTimeout(()=> {nextAudio(num + 1);}, 1000);
+  }
+};
+
+document.onkeypress = (ev) => {
+  ev.preventDefault();
+  var press = String.fromCharCode(ev.keyCode);
+  if (press == ' ') {
+    nextAudio(0);
+  }
+};
