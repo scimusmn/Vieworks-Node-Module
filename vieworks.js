@@ -24,28 +24,40 @@ var cam = new vieworks.camera(10);
 
 var cState = false;
 
+let idleTO = null;
+
+let resetIdleTimeout = () => {
+  if (idleTO) clearTimeout(idleTO);
+  idleTO = setTimeout(()=> {
+    alternateVideo();
+  }, 120000);
+};
+
 var loopPractice = () => {
-  arduino.digitalWrite(9,0);
+  arduino.digitalWrite(9, 0);
   console.log('Loop practice');
-  setTimeout(()=>{
-    arduino.digitalWrite(9,1);
-  },100);
-}
+  setTimeout(() => {
+    arduino.digitalWrite(9, 1);
+  }, 100);
+};
 
 var showGo = () => {
-  arduino.digitalWrite(4,0);
-  console.log("Show go");
-  setTimeout(()=>{
-    arduino.digitalWrite(4,1);
-  },100);
-}
+  arduino.digitalWrite(4, 0);
+  console.log('Show go');
+  setTimeout(() => {
+    arduino.digitalWrite(4, 1);
+    setTimeout(() => {
+      loopPractice();
+    }, 5000);
+  }, 100);
+};
 
 var alternateVideo = () => {
-  arduino.digitalWrite(6,0);
-  setTimeout(()=>{
-    arduino.digitalWrite(6,1);
-  },100);
-}
+  arduino.digitalWrite(6, 0);
+  setTimeout(() => {
+    arduino.digitalWrite(6, 1);
+  }, 100);
+};
 
 var greenExitLight = (state) => {
   arduino.digitalWrite(11, state);
@@ -57,26 +69,25 @@ var redExitLight = (state) => {
 
 var greenEntranceLight = (state) => {
   arduino.digitalWrite(3, state);
-  if(state) showGo();
+  if (state) showGo();
 };
 
 var redEntranceLight = (state) => {
   arduino.digitalWrite(5, state);
-  if(state) loopPractice();
+  if (state) loopPractice();
 };
-
 
 var justRecorded = false;
 
 var save = (dir) => {
   cam.save(dir, function() {
     //cam.stop();
-    console.log('seq=' + 'sequences/temp' + (dirNum-1));
-    if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum-1));
+    console.log('seq=' + 'sequences/temp' + (dirNum - 1));
+    if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum - 1));
     console.log('saved to ' + dir);
     cam.ready = true;
   });
-}
+};
 
 var pollLight = new function(){
   var cInt = null;

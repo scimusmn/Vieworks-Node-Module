@@ -125,6 +125,15 @@ var two = µ('#two');
 var one = µ('#one');
 var go = µ('#go');*/
 
+let idleTO = null;
+
+let resetIdleTimeout = () => {
+  if(idleTO) clearTimeout(idleTO);
+  idleTO = setTimeout(()=>{
+    //set the idle loop video
+  },120000);
+}
+
 let audio = [];
 
 for (var i = 0; i < 4; i++) {
@@ -135,7 +144,7 @@ for (var i = 0; i < 4; i++) {
 let nextAudio = function(num) {
   if (num < 4) {
     audio[num].play();
-    console.log(num)
+    console.log(num);
     setTimeout(()=> {nextAudio(num + 1);}, 1000);
   }
 };
