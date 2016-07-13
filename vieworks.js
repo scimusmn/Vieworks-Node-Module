@@ -24,6 +24,20 @@ var cam = new vieworks.camera(10);
 
 var cState = false;
 
+let audio = [];
+
+for (var i = 0; i < 4; i++) {
+  audio.push(document.querySelector('#audio_' + (i + 1)));
+  audio[i].load();
+}
+
+let beep = document.querySelector('#beep');
+beep.load();
+
+let longBeep = document.querySelector('#longBeep');
+longBeep.load();
+
+
 let idleTO = null;
 
 let resetIdleTimeout = () => {
@@ -132,8 +146,10 @@ var pollLight = new function(){
 var countdown = (count) => {
   pollLight.setStage(count);
   if (count > 0) {
+    beep.play();
     setTimeout(() => { countdown(count - 1); }, 1000);
   } else {
+    longBeep.play();
     pollLight.blink();
     cam.capture();
     console.log('start capture');
