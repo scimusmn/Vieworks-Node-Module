@@ -24,13 +24,6 @@ var cam = new vieworks.camera(10);
 
 var cState = false;
 
-let audio = [];
-
-for (var i = 0; i < 4; i++) {
-  audio.push(document.querySelector('#audio_' + (i + 1)));
-  audio[i].load();
-}
-
 let beep = document.querySelector('#beep');
 beep.load();
 
@@ -44,8 +37,10 @@ let resetIdleTimeout = () => {
   if (idleTO) clearTimeout(idleTO);
   idleTO = setTimeout(()=> {
     alternateVideo();
-  }, 120000);
+  }, 60000);
 };
+
+resetIdleTimeout();
 
 var loopPractice = () => {
   arduino.digitalWrite(9, 0);
@@ -133,9 +128,9 @@ var pollLight = new function(){
   this.blink = function () {
     cCount = 1;
     cInt = setInterval(()=>{
-      arduino.wireSend(8,[115*cCount]);
+      arduino.wireSend(8,[51*cCount]);
       cCount=!cCount;
-    },500);
+    },250);
   }
 
   this.stopBlink = function () {
@@ -146,7 +141,11 @@ var pollLight = new function(){
 var countdown = (count) => {
   pollLight.setStage(count);
   if (count > 0) {
-    beep.play();
+    if(!beep.paused){
+      beep.pause();
+      beep.currentTime = 0;
+    }
+    if(count<4) beep.play();
     setTimeout(() => { countdown(count - 1); }, 1000);
   } else {
     longBeep.play();
@@ -187,6 +186,7 @@ arduino.connect(cfg.portName, function() {
   arduino.watchPin(12, function(pin, state) {
     console.log(state + " is the current state");
     if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
+      resetIdleTimeout();
       justRecorded = true;
       cam.ready = false;
       countdown(5);
@@ -257,7 +257,7 @@ var dirNum = 0;
 function readDir(path) {
   var files = fs.readdirSync(path);
 
-  files.sort(function(a, b) {
+  files.sort(function(b, a) {
     return fs.statSync('./' + path + a).mtime.getTime() - fs.statSync('./' + path + b).mtime.getTime();
   });
 

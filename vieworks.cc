@@ -109,8 +109,8 @@ void vwCam::store(IMAGE_INFO* pImageInfo){
       //v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
       //Nan::MakeCallback(Nan::GetCurrentContext()->Global(), cb, argc, argv);
     }
-  } else memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
-  numStored++;
+  } //else memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
+  //numStored++;
 }
 
 void vwCam::allocate(){
@@ -525,34 +525,37 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   RESULT result = RESULT_ERROR;
   if(obj->buffer.storageNumber()){
     int saved = 0;
+    cout << "Saving...";
     for (int i = 0; i < obj->buffer.storageNumber(); i++){
       int bpp=24;
-      PBYTE buff = new BYTE[obj->bufferSize];;
-      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, buff, obj->buffer[i],  obj->width,obj->height );
-			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(buff, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
-      bmp = FreeImage_Rotate(bmp,270);
+      //PBYTE buff = new BYTE[obj->bufferSize];;
+      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveBuffer, obj->buffer[i],  obj->width,obj->height );
+			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->liveBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
+      FIBITMAP * rBmp = FreeImage_Rotate(bmp,270);
       char name[256];
 			sprintf(name,"%s\\%03i.jpg",dir.c_str(),i);
-      cout << name << endl;
 			FREE_IMAGE_FORMAT fif = FIF_JPEG;
-			FreeImage_Save(fif, bmp, name, 0);
+			FreeImage_Save(fif, rBmp, name, 0);
       if(i==obj->buffer.storageNumber()/2){
-        FIBITMAP * thumb = FreeImage_Rescale(bmp,obj->height/4,obj->width/4);
+        FIBITMAP * thumb = FreeImage_Rescale(rBmp,obj->height/4,obj->width/4);
         sprintf(name,"%s\\thumb.jpg",dir.c_str());
         FreeImage_Save(fif, thumb, name, 0);
         if (thumb != NULL) FreeImage_Unload(thumb);
       }
       saved++;
+      if (rBmp != NULL){
+				FreeImage_Unload(rBmp);
+			}
 			if (bmp != NULL){
 				FreeImage_Unload(bmp);
 			}
-      if(buff) delete buff;
+      //if(buff) delete buff;
     }
+    cout << "Done" << endl;
 	  if(saved ==  obj->buffer.storageNumber()){
        cout << "Saved " << obj->buffer.storageNumber() << " frames. "<<endl;
        const unsigned argc = 1;
        v8::Local<v8::Value> argv[argc] = { Nan::New((int)saved) };
-       info.GetReturnValue().Set(Nan::New((int)obj->buffer.storageNumber()));
        Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callb, argc, argv);
     }
 	  else cout << "Error while saving: "<< result << endl;

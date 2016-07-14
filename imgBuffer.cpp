@@ -53,6 +53,7 @@ bool imgBuffer::store(PBYTE pbuf){
 		else ret = false;
 		return ret;
 	}
+	return 0;
 }
 
 void imgBuffer::resetStore(){
