@@ -16,7 +16,7 @@ var thumbnail = inheritFrom(HTMLElement, function() {
 
     _this.reset = () => {
       _this.className = '';
-      _this.thumb.src = _this.setName.replace('-', '/') + '/thumb.jpg';
+      _this.thumb.src = _this.setName.replace('-', '/') + '/thumb.jpg?'+Math.random();
     };
 
     _this.onmousedown = () => {
@@ -34,8 +34,15 @@ var thumbnail = inheritFrom(HTMLElement, function() {
         thumbClick();
 				_this.className = 'thumbSelect';
         _this.player.loadSet(_this.setName.replace('-', '/') + '/');
+        setTimeout(()=>{
+          _this.player.play();
+        },2000)
       }
     };
+
+    _this.refreshSet = function() {
+      _this.thumb.src = _this.setName.replace('-', '/') + '/thumb.jpg?'+Math.random();
+    }
   };
 
   this.attributeChangedCallback = function(attr, oldVal, newVal) {
@@ -97,6 +104,7 @@ window.setGroup = function(flp, parent, rws, clm, asTable) {
     if (µ('[setName=' + setName + ']') && µ('[setName=' + setName + ']').length) {
       var set = µ('[setName=' + setName + ']')[0];
       set.setAttribute('setName', setName);
+      set.refreshSet();
       if (parent.childNodes.length > 1) {
         var temp = parent.removeChild(set);
         parent.insertBefore(temp, parent.firstChild);
@@ -107,7 +115,7 @@ window.setGroup = function(flp, parent, rws, clm, asTable) {
       var newSet = document.createElement('thumb-nail');//new setPointer(setName,flipPlr);
       newSet.setAttribute('setName', setName);
       newSet.setPlayer(flipPlr);
-
+      //newSet.refreshSet();
       //if(!visitorMode) newSet.setCelebMode(this);
       var curNum = sets.length;
       sets.push(newSet);
