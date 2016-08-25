@@ -125,7 +125,7 @@ var two = µ('#two');
 var one = µ('#one');
 var go = µ('#go');*/
 
-let idleTO = null;
+/*let idleTO = null;
 
 let resetIdleTimeout = () => {
   if(idleTO) clearTimeout(idleTO);
@@ -155,4 +155,78 @@ document.onkeypress = (ev) => {
   if (press == ' ') {
     nextAudio(0);
   }
-};
+};*/
+
+var express = require('express');
+var app = express();
+
+app.use(express.static('app'));
+
+app.listen(4030, function() {
+  console.log('listening on 80');
+});
+
+var cfg = require('./config.js').config;
+var fs = require('fs');
+
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({ port: 8080 });
+var webSock = null;
+
+function readDir(path) {
+  var files = fs.readdirSync(path);
+
+  files.sort(function(b, a) {
+    return fs.statSync('./' + path + a).mtime.getTime() - fs.statSync('./' + path + b).mtime.getTime();
+  });
+
+  for (var i = 0; i < files.length; i++) {
+    files[i] = path + files[i];
+  }
+
+  return files;
+}
+
+var changedFile;
+
+//Tell the wsServer what to do on connnection to a client;
+
+wss.on('connection', function(ws) {
+
+  webSock = ws;
+
+  onOpen();
+
+  ws.on('message', function(message) {
+    console.log('received: %s', message);
+  });
+
+  ws.on('close', function() {
+    webSock = null;
+  });
+
+  ws.on('error', function(error) {
+    webSock = null;
+    console.log('Error: ' + error);
+  });
+});
+
+function onOpen() {
+  var files = readDir('app/sequences/');
+  var celFiles = readDir('app/celeb_seq/');
+  if (webSock) {
+    for (var i = 0; i < files.length; i++) {
+      console.log(files[i]);
+      webSock.send('seq=' + files[i].substring(4));
+    }
+
+    for (var i = 0; i < celFiles.length; i++) {
+      webSock.send('cel=' + celFiles[i].substring(4));
+    }
+  }
+}
+
+/* one light/switch
+  knobs/analog read out.
+  four buttons
+  */
