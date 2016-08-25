@@ -30,10 +30,21 @@ beep.load();
 let longBeep = document.querySelector('#longBeep');
 longBeep.load();
 
+let clickTrack = document.querySelector('#click');
+clickTrack.load();
+
+let audio = [];
+
+for (var i = 0; i < 4; i++) {
+  audio.push(document.querySelector('#audio_' + (i)));
+  audio[i].load();
+}
+
 
 let idleTO = null;
 
 let resetIdleTimeout = () => {
+  console.log()
   if (idleTO) clearTimeout(idleTO);
   idleTO = setTimeout(()=> {
     alternateVideo();
@@ -63,6 +74,7 @@ var showGo = () => {
 
 var alternateVideo = () => {
   arduino.digitalWrite(6, 0);
+  console.log("alternate");
   setTimeout(() => {
     arduino.digitalWrite(6, 1);
   }, 100);
@@ -141,34 +153,46 @@ var pollLight = new function(){
 var countdown = (count) => {
   pollLight.setStage(count);
   if (count > 0) {
-    if(!beep.paused){
+    /*if(audio[i+1]&&!audio[i+1].paused){
       beep.pause();
       beep.currentTime = 0;
-    }
-    if(count<4) beep.play();
+    }*/
+    if(count<4) audio[count].play();
     setTimeout(() => { countdown(count - 1); }, 1000);
+    if(count == 1 ) cam.capture();
   } else {
-    longBeep.play();
+    //longBeep.play();
+    audio[count].play();
+    clickTrack.play();
+    //audio[count].onended = function () {
+      //longBeep.play();
+    //}
     pollLight.blink();
-    cam.capture();
+    //longBeep.play();
+    //cam.capture();
     console.log('start capture');
 
     setTimeout(function() {
+      //beep.play();
       pollLight.stopBlink();
       pollLight.setRed();
       cam.stopCapture();
       console.log('done capturing');
       var dir = './app/sequences/temp' + dirNum++;
+      if(dirNum>=21) dirNum = 0;
       greenExitLight(1);
       redExitLight(0);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
         save(dir);
+        fs.utimesSync(dir,NaN,NaN);
       } else {
+
         var exec = require('child_process').exec;
         exec('rm -r'+dir, ()=>{
           //fs.mkdirSync(dir);
           save(dir);
+          fs.utimesSync(dir,NaN, NaN);
         });
       }
 
@@ -191,7 +215,7 @@ arduino.connect(cfg.portName, function() {
       cam.ready = false;
       countdown(5);
       greenExitLight(0);
-      redExitLight(1);
+      redExitLight(0);
       greenEntranceLight( 0);
       redEntranceLight( 1);
     }
@@ -245,7 +269,7 @@ arduino.connect(cfg.portName, function() {
 cam.setFrameRate(200);
 cam.setImageGain(6);
 
-cam.allocateBuffer(600);
+cam.allocateBuffer(800);
 
 cam.start();
 cam.ready = true;
@@ -257,8 +281,11 @@ var dirNum = 0;
 function readDir(path) {
   var files = fs.readdirSync(path);
 
-  files.sort(function(b, a) {
-    return fs.statSync('./' + path + a).mtime.getTime() - fs.statSync('./' + path + b).mtime.getTime();
+  files.sort(function(a, b) {
+    //console.log("Create time for " + a+" is " + fs.statSync('./' + path + a).atime.getTime());
+    //console.log("Create time for " + b +" is " + fs.statSync('./' + path + b).atime.getTime());
+
+    return fs.statSync('./' + path + a).atime.getTime() - fs.statSync('./' + path + b).atime.getTime();
   });
 
   for (var i = 0; i < files.length; i++) {
@@ -297,12 +324,19 @@ function onOpen() {
   var celFiles = readDir('app/celeb_seq/');
   if (webSock) {
     for (var i = 0; i < files.length; i++) {
-      console.log(files[i]);
+      //console.log(files[i]);
       webSock.send('seq=' + files[i].substring(4));
     }
 
     for (var i = 0; i < celFiles.length; i++) {
       webSock.send('cel=' + celFiles[i].substring(4));
     }
+  }
+}
+
+document.onkeypress = (e) => {
+  var press = String.fromCharCode(e.keyCode);
+  if(press = 'g') {
+    showGo();
   }
 }
