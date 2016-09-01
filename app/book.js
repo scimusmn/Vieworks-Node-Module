@@ -105,36 +105,12 @@ include([], function() {
 		}
 
 		this.drawFrame=function(){			//display image
-			/*if(bLoaded){
-				canvas.width = canvas.width;
-				ctx.fillStyle = "rgb(170,170,170)";
-				ctx.fillRect (0,0,canvas.width,canvas.height);
-				ctx.drawImage(tiles[nDisp], imgPad/2,imgPad/2);
-			}
-			else{
-				var numComp = 0;
-				for(let i=0; i<tiles.length; i++){
-					if(tiles[i].complete && tiles[i].naturalWidth !== 0){
-						numComp++;
-						canvas.width=tiles[i].width+imgPad;
-						canvas.height=tiles[i].height+imgPad;
-					} else if(tiles[i].naturalWidth === 0){
-						tiles.length--;
-					}
-				}
-				if(numComp>=tiles.length/2&&numComp) bLoading=false,bLoaded=true;
-
-				canvas.width = canvas.width;
-				ctx.fillStyle = "rgb(170,170,170)";
-				ctx.fillRect (0,0,canvas.width,canvas.height);
-				ctx.drawImage(notLoadedImg, imgPad/2,imgPad/2);
-			}*/
 			if(tiles.length&&tiles[nDisp].complete){
 				canvas.width=tiles[nDisp].width+imgPad;
 				canvas.height=tiles[nDisp].height+imgPad;
 				ctx.fillStyle = "rgb(170,170,170)";
 				ctx.fillRect (0,0,canvas.width,canvas.height);
-				ctx.drawImage(tiles[nDisp], imgPad/2,imgPad/2);
+				ctx.drawImage(tiles[nDisp], imgPad/2,imgPad/2,canvas.width,canvas.height);
 
 			} else {
 				canvas.width=notLoadedImg.width+imgPad;
@@ -147,9 +123,8 @@ include([], function() {
 
 		this.idle=function(){						//increment the image pointer, if we are playing
 			if(bPlaying&&nDisp<tiles.length-1&&tiles[nDisp+1].complete){
-				//do {nDisp++} while(!tiles[nDisp].loaded||nDisp<tiles.length-1);
 				nDisp++;
-				imgSld.changeVal(nDisp/tiles.length);
+				imgSld.setPercent(nDisp/tiles.length);
 			}
 			else if(tiles.length-2<=nDisp){
 				bPlaying=false;
@@ -202,7 +177,7 @@ include([], function() {
 		this.reset=function(){
 			nDisp=0;
 			bPlaying=false;
-			if(imgSld) imgSld.changeVal(0);
+			if(imgSld) imgSld.setPercent(0);
 		};
 
 		this.changeDir=function(dir){
@@ -212,8 +187,3 @@ include([], function() {
 		}
 	};
 });
-	//var book = new flipbook($("visitor-caps"));
-
-	//setInterval(book.drawFrame,50);
-	//setInterval(book.idle,50);
-	//window.onload = book.init;

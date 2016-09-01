@@ -1,6 +1,6 @@
 'use strict';
 
-include(['book.js'],function(){
+include(['book.js','slider.js'],function(){
 	window.flipPlayer = function (containerID){
 		var _this = this;
 		var cntnr = µ(containerID);
@@ -22,20 +22,21 @@ include(['book.js'],function(){
 		playBut.className = "button";
 		controls.appendChild(playBut);
 
-		var bgDiv = document.createElement("div");
-		bgDiv.style.width = 512+"px";
-		bgDiv.className = "slider-background";
-		controls.appendChild(bgDiv);
-
-		var slide = new imgSlider(bgDiv,flip);
+		var slide = new window.Slider();
+		slide.setAttribute('orient','horiz');
+		controls.appendChild(slide);
 
 		flip.registerStopCB(function(){
 			playBut.src = playImg;
 		},this);
 
 		this.init = function(){
-			slide.connect();
-
+			//slide.connect();
+			flip.connectSlider(slide);
+			slide.onMoved = () => {
+				flip.changePosByPercent(slide.getPercent());
+				flip.stop();
+			}
 		}
 
 		this.changeSet = function(dirName){

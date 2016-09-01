@@ -3,6 +3,7 @@ dll/*
 temp*
 test*
 sequences*/*
+app/sequence*/*
 celeb_seq*/*
 node_modules/*
 node_modules_old/*

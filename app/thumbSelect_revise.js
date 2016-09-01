@@ -1,132 +1,149 @@
 'use strict';
 
-var thumbnail = inheritFrom(HTMLElement, function() {
-  this.setPlayer = function(plr) {
-    this.player = plr;
-  };
+include([], function() {
+  var thumbnail = inheritFrom(HTMLElement, function() {
 
-  this.createdCallback = function() {
-    var _this = this;
-    _this.thumb = µ('+img', _this);
-  };
+    this.createdCallback = function() {
+      var _this = this;
+      _this.thumb = µ('+img', _this);
 
-  this.attachedCallback = function() {
-    var _this = this;
-    _this.setName = µ('|>setName', _this).replace('/', '-');
+      _this.onSelect = () => {};
 
-    _this.reset = () => {
-      _this.className = '';
-      _this.thumb.src = _this.setName.replace('-', '/') + '/thumb.jpg?'+Math.random();
+      _this.onMouseStart = (which) => {};
+
+      _this.onMouseFinish = () => {};
     };
 
-    _this.onmousedown = () => {
-      _this.clicked = true;
-      _this.thumb.src = 'assets/pngs/thumbBG.png';
-      _this.className = 'thumbSelect';
-      var rest = µ('thumb-nail');
-      for (var i = 0; i < rest.length; i++) {
-        rest[i].reset();
+    this.attachedCallback = function() {
+      var _this = this;
+
+      _this.setName = µ('|>setName', _this);
+      _this.start = { x:0, y:0 };
+      _this.init = { x:0, y:0 };
+
+      _this.reset = () => {
+        _this.className = '';
+        _this.thumb.src = _this.setName + '/thumb.jpg?' + Math.random();
+      };
+
+      _this.onmousedown = (e) => {
+        e.preventDefault();
+        _this.clicked = true;
+        document.onmouseup = _this.onmouseup;
+        _this.onMouseStart(_this);
+
+        var rest = µ('thumb-nail');
+        for (var i = 0; i < rest.length; i++) {
+          rest[i].reset();
+        }
+      };
+
+      _this.onmouseup = function(e) {
+        console.log(e.target);
+        if (_this.clicked && e.target.parentNode == _this) {
+          µ('.playback').style('display', 'inline-block');
+          µ('.select').style('display', 'none');
+          _this.className = '';
+          _this.onSelect();
+        }
+
+        _this.onMouseFinish();
+
+        _this.clicked = false;
+        document.onmouseup = null;
+        document.onmousemove = null;
+      };
+
+      _this.refreshSet = function() {
+        _this.thumb.src = _this.setName + '/thumb.jpg?' + Math.random();
+      };
+    };
+
+    this.attributeChangedCallback = function(attr, oldVal, newVal) {
+      if (attr == 'setname') {
+        this.thumb.src = newVal + '/thumb.jpg?' + Math.random();
+        this.setName = newVal;
       }
     };
+  });
 
-    _this.onmouseup = function() {
-      if (_this.clicked) {
-        thumbClick();
-				_this.className = 'thumbSelect';
-        _this.player.loadSet(_this.setName.replace('-', '/') + '/');
-        setTimeout(()=>{
-          _this.player.play();
-        },2000)
-      }
+  var Thumbs = document.registerElement('thumb-nail', thumbnail);
+
+  var thumbGroup = inheritFrom(HTMLElement, function() {
+    this.createdCallback = function() {
+      var _this = this;
+
+      _this.player = µ('#' + µ('|>player', _this));
+      _this.max = parseInt(µ('|>max', _this));
+      _this.scrollable = (µ('|>scrollable', _this) == 'true');
+      _this.activeThumb = null;
+      _this.start = { x:0, y:0 };
+      _this.init = { x:0, y:0 };
+
+      _this.logThumb = (aTh) => {
+        _this.activeThumb = aTh;
+        console.log('thumb!');
+      };
+
+      _this.onMoved = () => {};
+
+      _this.onmousedown =  (e) => {
+        if (_this.scrollable) {
+          _this.clicked = true;
+          _this.start.y = e.clientY - extractNumber(_this.style.marginTop);
+          _this.init.y = e.clientY;
+        }
+      };
+
+      _this.onmousemove = function(e) {
+        if (_this.clicked && _this.scrollHeight > _this.parentNode.clientHeight) {
+          if (Math.abs(e.clientY - _this.init.y) > 20 && _this.activeThumb)
+            _this.activeThumb.clicked = false;
+          var offset = e.clientY - _this.start.y;
+          var max = _this.parentNode.clientHeight - _this.scrollHeight;
+          if (offset > 0) offset = 0;
+          else if (offset < max) offset = max;
+          _this.style.marginTop = offset + 'px';
+
+          _this.onMoved();
+        }
+      };
+
+      _this.onmouseup = () => {
+        _this.clicked = false;
+      };
+
+      this.handleSet = function(setName) {
+        var set = null;
+        if (µ('[setName="' + setName + '"]') && µ('[setName="' + setName + '"]').length) {
+          set = µ('[setName="' + setName + '"]')[0];
+          set.setAttribute('setName', setName);
+          set.refreshSet();
+          _this.removeChild(set);
+        } else {
+          if (_this.childNodes.length >= _this.max) _this.removeChild(_this.lastChild);
+          set = document.createElement('thumb-nail');//new setPointer(setName,flipPlr);
+          set.setAttribute('setName', setName);
+
+          set.onSelect = function() {
+            _this.player.loadSet(set.setName + '/');
+          };
+
+          set.onMouseStart = _this.logThumb;
+          set.onMouseFinish = _this.onmouseup;
+        }
+
+        if (_this.childNodes.length > 1) {
+          _this.insertBefore(set, _this.firstChild);
+        } else {
+          _this.appendChild(set);
+        }
+      };
+
     };
+  });
 
-    _this.refreshSet = function() {
-      _this.thumb.src = _this.setName.replace('-', '/') + '/thumb.jpg?'+Math.random();
-    }
-  };
+  var ThumbGroup = document.registerElement('thumb-group', thumbGroup);
 
-  this.attributeChangedCallback = function(attr, oldVal, newVal) {
-    console.log(attr);
-    if (attr == 'setname') {
-      console.log('setAttribute');
-      this.thumb.src = newVal.replace('-', '/') + '/thumb.jpg?'+Math.random();
-      this.setName = newVal.replace('/', '-');
-    }
-  };
+  //console.log(visitorCaps);
 });
-
-var Thumbs = document.registerElement('thumb-nail', thumbnail);
-
-function thumbClick() {
-  var selEl = document.querySelectorAll('.playback');
-  console.log(selEl);
-  for (var i = 0; i < selEl.length; i++) {
-    selEl[i].style.display = 'table-row';
-  }
-
-  selEl = document.querySelectorAll('.select');
-  for (var i = 0; i < selEl.length; i++) {
-    selEl[i].style.display = 'none';
-  }
-}
-
-window.setGroup = function(flp, parent, rws, clm, asTable) {
-  var flipPlr = flp;
-  var sets = [];
-  var elements = [];
-
-  var rows = rws;
-  var columns = clm;
-  var visitorMode = true;
-  var tableMode = asTable;
-
-  this.setCelebMode = function() {
-    visitorMode = false;
-    flipPlr.celebMode();
-
-    //for(var i=0; i<sets.length; i++){
-    //sets[i].setCelebMode(this.resetSelected());
-    //}
-  };
-
-  this.resetSelected = function() {
-    for (var i = 0; i < sets.length; i++) {
-      sets[i].reset();
-    }
-  };
-
-  this.addOrChangeSet = function(setName) {
-    console.log(setName);
-    setName = setName.replace('/', '-');
-
-    //var setFol = setName.split('/');
-    //var set = setFol[setFol.length-1]
-    if (µ('[setName=' + setName + ']') && µ('[setName=' + setName + ']').length) {
-      var set = µ('[setName=' + setName + ']')[0];
-      set.setAttribute('setName', setName);
-      set.refreshSet();
-      if (parent.childNodes.length > 1) {
-        var temp = parent.removeChild(set);
-        parent.insertBefore(temp, parent.firstChild);
-      }
-    } else {
-      //console.log(flipPlr);
-      console.log(setName);
-      var newSet = document.createElement('thumb-nail');//new setPointer(setName,flipPlr);
-      newSet.setAttribute('setName', setName);
-      newSet.setPlayer(flipPlr);
-      //newSet.refreshSet();
-      //if(!visitorMode) newSet.setCelebMode(this);
-      var curNum = sets.length;
-      sets.push(newSet);
-      if (parent.childNodes.length > 1) {
-        parent.insertBefore(newSet, parent.firstChild);
-      } else {
-        parent.appendChild(newSet);
-      }
-    }
-  };
-
-};
-
-//console.log(visitorCaps);

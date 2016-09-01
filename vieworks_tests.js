@@ -157,6 +157,8 @@ document.onkeypress = (ev) => {
   }
 };*/
 
+'use strict';
+
 var express = require('express');
 var app = express();
 
@@ -175,17 +177,42 @@ var webSock = null;
 
 function readDir(path) {
   var files = fs.readdirSync(path);
+  var ret = [];
 
   files.sort(function(b, a) {
-    return fs.statSync('./' + path + a).mtime.getTime() - fs.statSync('./' + path + b).mtime.getTime();
+    return fs.statSync('./' + path + b).atime.getTime() - fs.statSync('./' + path + a).atime.getTime();
   });
 
   for (var i = 0; i < files.length; i++) {
-    files[i] = path + files[i];
+    if (files[i].charAt(0) != '.') ret.push(path + files[i]);
   }
 
-  return files;
+  return ret;
 }
+
+var fileTimes = [];
+
+function watchDir(path) {
+  var files = fs.readdirSync(path);
+  var ret = null;
+  for (var i = 0; i < files.length; i++) {
+    var time = fs.statSync('./' + path + files[i]).atime.getTime();
+    if (time != fileTimes[i]) {
+      ret = files[i];
+      fileTimes[i] = time;
+    }
+  }
+
+  return ret;
+}
+
+setInterval(function() {
+  var newDir = watchDir('app/sequences/');
+  if (newDir) {
+    console.log(newDir);
+    if (webSock) webSock.send('seq=' + 'sequences/' + newDir);
+  }
+}, 500);
 
 var changedFile;
 
@@ -225,8 +252,3 @@ function onOpen() {
     }
   }
 }
-
-/* one light/switch
-  knobs/analog read out.
-  four buttons
-  */
