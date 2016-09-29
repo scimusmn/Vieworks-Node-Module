@@ -20,11 +20,11 @@ include(incs, () => {
   window.webSockClient.onMessage = (evt) => {
     switch (evt.data.split('=')[0]){
       case 'seq':
-        visGroup.handleSet(evt.data.split('=')[1]);
+        visGroup.handleSet(evt.data.split('=')[1],parseInt(evt.data.split(':')[2]));
         break;
       case 'cel':
 
-        celebGroup.handleSet(evt.data.split('=')[1]);
+        celebGroup.handleSet(evt.data.split('=')[1],parseInt(evt.data.split(':')[2]));
         break;
       default:
         break;

@@ -68,7 +68,7 @@ var showGo = () => {
     arduino.digitalWrite(4, 1);
     setTimeout(() => {
       loopPractice();
-    }, 5000);
+    }, 10000);
   }, 100);
 };
 
@@ -104,6 +104,7 @@ var save = (dir) => {
   cam.save(dir, function() {
     //cam.stop();
     console.log('seq=' + 'sequences/temp' + (dirNum - 1));
+    //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
     if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum - 1));
     console.log('saved to ' + dir);
     cam.ready = true;
@@ -324,11 +325,12 @@ function onOpen() {
   var celFiles = readDir('app/celeb_seq/');
   if (webSock) {
     for (var i = 0; i < files.length; i++) {
-      //console.log(files[i]);
+      //var num = fs.readdirSync(files[i]).length;
       webSock.send('seq=' + files[i].substring(4));
     }
 
     for (var i = 0; i < celFiles.length; i++) {
+      //var num = fs.readdirSync(celFiles[i]).length;
       webSock.send('cel=' + celFiles[i].substring(4));
     }
   }
