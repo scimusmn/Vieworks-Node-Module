@@ -5,6 +5,7 @@ test*
 sequences*/*
 app/sequence*/*
 celeb_seq*/*
+app/celeb_seq*/*
 node_modules/*
 node_modules_old/*
 app/src/vendor/*
