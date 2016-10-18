@@ -48,6 +48,7 @@ bool imgBuffer::store(PBYTE pbuf){
 	if(buffers){
 		bool ret=true;
 		if(nStored<nBuf&&nBuf){
+
 			if(buffers[nStored]) memcpy(buffers[nStored++],pbuf,nSz/3);
 		}
 		else ret = false;

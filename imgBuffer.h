@@ -1,6 +1,6 @@
 #pragma once
-#include <windows.h>
 #include <iostream>
+#include <VwGigE.Global.h>
 
 class imgBuffer {
 protected:

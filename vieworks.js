@@ -2,7 +2,7 @@
 "use strict";
 
 var vieworks = require('bindings')('vieworks');
-var arduino = require('./arduino.js').arduino;
+window.arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
 var fs = require('fs');
@@ -105,7 +105,7 @@ var save = (dir) => {
     //cam.stop();
     console.log('seq=' + 'sequences/temp' + (dirNum - 1));
     //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
-    if (webSock) webSock.send('seq=' + 'sequences/temp' + (dirNum - 1));
+    if (webSock) webSock.send('seq=' + 'sequences\\temp' + (dirNum - 1));
     console.log('saved to ' + dir);
     cam.ready = true;
   });
@@ -151,6 +151,20 @@ var pollLight = new function(){
   }
 }
 
+var deleteFolderRecursive = function(path) {
+  if(path && fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 var countdown = (count) => {
   pollLight.setStage(count);
   if (count > 0) {
@@ -183,20 +197,10 @@ var countdown = (count) => {
       if(dirNum>=21) dirNum = 0;
       greenExitLight(1);
       redExitLight(0);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-        save(dir);
-        fs.utimesSync(dir,NaN,NaN);
-      } else {
-
-        var exec = require('child_process').exec;
-        exec('rm -r'+dir, ()=>{
-          //fs.mkdirSync(dir);
-          save(dir);
-          fs.utimesSync(dir,NaN, NaN);
-        });
-      }
-
+      if (fs.existsSync(dir)) deleteFolderRecursive(dir);
+      fs.mkdirSync(dir);
+      save(dir);
+      fs.utimesSync(dir,NaN,NaN);
 
 
       cState = false;
@@ -204,28 +208,31 @@ var countdown = (count) => {
   }
 };
 
+window.startCntdn = function(pin, state) {
+  console.log(state + " is the current state");
+  if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
+    resetIdleTimeout();
+    justRecorded = true;
+    cam.ready = false;
+    countdown(5);
+    greenExitLight(0);
+    redExitLight(0);
+    greenEntranceLight( 0);
+    redEntranceLight( 1);
+  }
+
+  /*if (!cState && !state){
+    countdown(9);
+    cState = true;
+  }*/
+};
+
 arduino.connect(cfg.portName, function() {
+  console.log('Connecting to Arduino');
   //setTimeout(()=>{
   pollLight.setStage(4);
 
-  arduino.watchPin(12, function(pin, state) {
-    console.log(state + " is the current state");
-    if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
-      resetIdleTimeout();
-      justRecorded = true;
-      cam.ready = false;
-      countdown(5);
-      greenExitLight(0);
-      redExitLight(0);
-      greenEntranceLight( 0);
-      redEntranceLight( 1);
-    }
-
-    /*if (!cState && !state){
-      countdown(9);
-      cState = true;
-    }*/
-  });
+  arduino.watchPin(12, window.startCntdn);
 
   arduino.watchPin(8, function(pin, state) {
     console.log(state + " is the current state");
@@ -268,9 +275,9 @@ arduino.connect(cfg.portName, function() {
 });
 
 cam.setFrameRate(200);
-cam.setImageGain(6);
+cam.setImageGain(3.99);
 
-cam.allocateBuffer(800);
+cam.allocateBuffer(1000);
 
 cam.start();
 cam.ready = true;
@@ -283,9 +290,6 @@ function readDir(path) {
   var files = fs.readdirSync(path);
 
   files.sort(function(a, b) {
-    //console.log("Create time for " + a+" is " + fs.statSync('./' + path + a).atime.getTime());
-    //console.log("Create time for " + b +" is " + fs.statSync('./' + path + b).atime.getTime());
-
     return fs.statSync('./' + path + a).atime.getTime() - fs.statSync('./' + path + b).atime.getTime();
   });
 
@@ -338,7 +342,8 @@ function onOpen() {
 
 document.onkeypress = (e) => {
   var press = String.fromCharCode(e.keyCode);
-  if(press = 'g') {
+  if(press == 'g') {
     showGo();
-  }
+  } else if(press == 'c') startCntdn();
+  else if(press == 'r') justRecorded = false;
 }

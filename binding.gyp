@@ -1,41 +1,28 @@
 {
-  "variables": {
-    "dll_files":["VwGigE.V7.dll"]
-  },
   "targets": [
     {
       "target_name": "vieworks",
       "sources": [ "inits.cc", "vieworks.cc", "imgBuffer.cpp" ],
-      "libraries": ["FreeImage.lib","VwGigE.V7.lib"],
+      "libraries": [
+        "/usr/lib/libfreeimage.so.3",
+        "/usr/lib/libVwGigE.so",
+        "/usr/lib/libVwTli.so.1.1.0",
+        "/opt/genicam2.3.1/bin/Linux64_x64/liblog4cpp_gcc40_v2_3.so",
+        "/opt/genicam2.3.1/bin/Linux64_x64/libGenApi_gcc40_v2_3.so",
+        "/opt/genicam2.3.1/bin/Linux64_x64/libGCBase_gcc40_v2_3.so",
+      ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
-        "vendor/FreeImage/include",
-        "vendor/vieworks/Include"
+        "vendor/ubuntu/FreeImage/include",
+        "/usr/include/VIS-Shadow",
+        "/opt/genicam2.3.1/library/CPP/include"
       ],
-      "copies": [{
-        "destination": "build/release",
-        "files": [
-            "dll/TLI.V7.dll",
-            "dll/TLICL.dll",
-            "dll/TLICXP.dll",
-            "dll/TLIGigE.dll",
-            "dll/VwCXP.V7.dll",
-            "dll/VwGigE.V7.dll",
-            "dll/MathParser_MD_VC100_v2_4.dll",
-            "dll/log4cpp_MD_VC100_v2_4.dll",
-            "dll/Log_MD_VC100_v2_4.dll",
-            "dll/ImageProcess.dll",
-            "dll/FreeImage.dll",
-            "dll/GenApi_MD_VC100_v2_4.dll",
-            "dll/GCBase_MD_VC100_v2_4.dll",
-            "dll/CLProtocol_MD_VC100_v2_4.dll",
-            "dll/CLAllSerial_MD_VC100_v2_4.dll"
-        ]
-      }],
       "library_dirs": [
-        "vendor/FreeImage/lib",
-        "vendor/vieworks/LIB/x64"
-      ]
+        "../vendor/ubuntu/FreeImage/lib",
+        "../vendor/ubuntu/vieworks/lib/x64"
+      ],
+      'cflags_cc!': ['-fno-rtti'],
+      'cflags_cc': ['-fexceptions'],
     }
   ]
 }

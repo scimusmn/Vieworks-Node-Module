@@ -9,12 +9,14 @@
 
 // for VwGigE
 #include "VwGigE.h"
+#include "VwGigE.API.h"
 #include "VwCamera.h"
 #include "VwImageProcess.h"
+#include "PixelFormat/ipixelformat.h"
 //#include "VwGigE.API.h"
 
-using namespace VWSDK;
 using namespace v8;
+using namespace PixelFormat;
 
 #include "FreeImage.h"
 
@@ -28,9 +30,11 @@ class vwCam : public Nan::ObjectWrap {
 
  private:
    imgBuffer buffer;
-   VwGigE* GigE;
-   VwCamera* camera;
+   VWGIGE_HANDLE GigE;
+   HCAMERA camera;
    BITMAPINFO* BmpInfo1;
+   IPixelFormat* piPixelFormat;
+
 	 UINT imageBufferNumber;
 	 OBJECT_INFO* objectInfo;
    PBYTE liveBuffer;

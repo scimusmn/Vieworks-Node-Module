@@ -1,4 +1,4 @@
 exports.config = {
   recordTime: 3000, //ms
-  portName:'COM11',
+  portName:'/dev/ttyUSB0',
 };
