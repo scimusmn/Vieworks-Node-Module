@@ -1,0 +1,3 @@
+[submodule "app/src/vendor/Muse"]
+path = app/src/vendor/Muse
+url = https://github.com/heidgera/Muse
