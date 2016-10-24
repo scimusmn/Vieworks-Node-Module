@@ -20,7 +20,7 @@ var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
 var webSock = null;
 
-var cam = new vieworks.camera(10);
+var cam = new vieworks.camera();
 
 var cState = false;
 
@@ -208,18 +208,23 @@ var countdown = (count) => {
   }
 };
 
+window.resetCam = function () {
+  justRecorded = false;
+}
+
 window.startCntdn = function(pin, state) {
   console.log(state + " is the current state");
-  if (!cam.isCapturing() && !state && cam.ready && !justRecorded) {
-    resetIdleTimeout();
-    justRecorded = true;
-    cam.ready = false;
-    countdown(5);
-    greenExitLight(0);
-    redExitLight(0);
-    greenEntranceLight( 0);
-    redEntranceLight( 1);
-  }
+  if(!cam.isCapturing() && cam.ready)
+    if ( !state && !justRecorded) {
+      resetIdleTimeout();
+      justRecorded = true;
+      cam.ready = false;
+      countdown(5);
+      greenExitLight(0);
+      redExitLight(0);
+      greenEntranceLight( 0);
+      redEntranceLight( 1);
+    }
 
   /*if (!cState && !state){
     countdown(9);
@@ -227,60 +232,111 @@ window.startCntdn = function(pin, state) {
   }*/
 };
 
-arduino.connect(cfg.portName, function() {
-  console.log('Connecting to Arduino');
-  //setTimeout(()=>{
-  pollLight.setStage(4);
+setTimeout(()=>{
+  arduino.connect(cfg.portName, function() {
+    console.log('Connecting to Arduino');
+    pollLight.setStage(4);
 
-  arduino.watchPin(12, window.startCntdn);
+    arduino.watchPin(12, window.startCntdn);
 
-  arduino.watchPin(8, function(pin, state) {
-    console.log(state + " is the current state");
-    if (state) {
-      setTimeout(()=>{
-        greenExitLight(0);
-        redExitLight(1);
-        greenEntranceLight( 0);
-        redEntranceLight( 1);
-      },1000);
-    }
+    arduino.watchPin(8, function(pin, state) {
+      console.log(state + " is the current state");
+      if (state) {
+        setTimeout(()=>{
+          greenExitLight(0);
+          redExitLight(1);
+          greenEntranceLight( 0);
+          redEntranceLight( 1);
+        },1000);
+      }
+    });
+
+    arduino.watchPin(7, function(pin, state) {
+      console.log(state + " is the current state on "+ pin);
+      if (state) {
+        setTimeout(()=>{
+          justRecorded = false;
+          greenExitLight(0);
+          redExitLight(1);
+          greenEntranceLight( 1);
+          redEntranceLight( 0);
+          pollLight.setStage(4)
+        },1000);
+      }
+    });
+
+    console.log('arduino start')
+
+    arduino.digitalWrite(9,1);
+    arduino.digitalWrite(6,1);
+    arduino.digitalWrite(4,1);
+
+    greenExitLight(0);
+    redExitLight(1);
+    greenEntranceLight( 1);
+    redEntranceLight( 0);
+
   });
+},30000)
 
-  arduino.watchPin(7, function(pin, state) {
-    console.log(state + " is the current state on "+ pin);
-    if (state) {
-      setTimeout(()=>{
-        justRecorded = false;
-        greenExitLight(0);
-        redExitLight(1);
-        greenEntranceLight( 1);
-        redEntranceLight( 0);
-        pollLight.setStage(4)
-      },1000);
-    }
-  });
-
-  console.log('arduino start')
-
-  arduino.digitalWrite(9,1);
-  arduino.digitalWrite(6,1);
-  arduino.digitalWrite(4,1);
-
-  greenExitLight(0);
-  redExitLight(1);
-  greenEntranceLight( 1);
-  redEntranceLight( 0);
-  //},3000);
-
-});
 
 cam.setFrameRate(200);
 cam.setImageGain(3.99);
 
 cam.allocateBuffer(1000);
 
-cam.start();
-cam.ready = true;
+var pre = document.createElement('canvas');
+var can = document.querySelector('#display');
+
+setInterval(()=>{
+  cam.idle();
+},50);
+
+cam.start(function(val){
+  cam.ready = true;
+  var ctx = can.getContext('2d');
+  var ptx = pre.getContext('2d');
+
+  var w = Math.ceil(cam.getWidth());
+  var h = Math.ceil(cam.getHeight());
+  can.width = h;
+  can.height = w;
+
+  pre.width = w;
+  pre.height = h;
+
+  setInterval(()=>{
+    if(!cam.isCapturing()){
+      var t = cam.getImage();
+      if(t&&t.length>=w*h*3){
+        var im = ptx.createImageData(w,h);
+        var con = new Uint8ClampedArray(w*h*4);
+        for(let i=0,j=0; i< t.length; i+=4,j+=3){
+          //var p = palette(t[i]);
+          con[i] = t[j+2]*1.1;
+          con[i+1] = t[j+1];
+          con[i+2] = t[j];
+          con[i+3] = 255;
+        }
+        im.data.set(con);
+
+        //note: to mirror this, draw to intermediate canvas, and then drawImage
+        // the intermediate into the display canvas
+
+        ptx.putImageData(im,0,0);
+
+        ctx.save();
+        ctx.translate(200,240);
+        ctx.rotate(Math.PI/2);
+        //ctx.fillStyle = '#777';
+        //ctx.fillRect(-320,-240,50,100);
+        ctx.drawImage(pre,-320,-240);
+        ctx.restore();
+      }
+    }
+  },50);
+});
+
 
 var dirNum = 0;
 

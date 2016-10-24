@@ -1,7 +1,7 @@
 
 'use strict';
 
-/*var arduino = require('./arduino.js').arduino;
+window.arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
 
@@ -118,7 +118,7 @@ arduino.connect(cfg.portName, function() {
   arduino.digitalWrite(5, 0);
   //},3000);
 
-});*/
+});
 
 /*var three = µ('#three');
 var two = µ('#two');
@@ -155,9 +155,9 @@ document.onkeypress = (ev) => {
   if (press == ' ') {
     nextAudio(0);
   }
-};*/
+};
 
-'use strict';
+/*'use strict';
 
 var express = require('express');
 var app = express();
@@ -251,4 +251,4 @@ function onOpen() {
       webSock.send('cel=' + celFiles[i].substring(4));
     }
   }
-}
+}*/

@@ -32,7 +32,8 @@ In file included from ../imgBuffer.h:3:0,
 In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:33,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:57:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -43,7 +44,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
 In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:33,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:120:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop ) // 4275
@@ -73,7 +75,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Log.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/Log/CLog.h:34:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (push, 3)
@@ -87,7 +90,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/log4cpp/PatternLayou
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/log4cpp/Configurator.hh:11:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( disable: 4275 ) // non dll-interface structXXX used as base
@@ -96,7 +100,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Log.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/Log/CLog.h:53:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (pop)
@@ -105,7 +110,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:37:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IBase.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -121,7 +127,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:39:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Container.h:45:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( disable : 4312 )
@@ -130,7 +137,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:38:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:43:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -142,7 +150,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:38:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:317:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop )
@@ -152,7 +161,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IValue.h:39:0
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:266:42: warning: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wliteral-suffix]
              throw OUT_OF_RANGE_EXCEPTION("Value = %"FMT_I64"d must be equal or greater than Min = %"FMT_I64"d", (int64_t)(_Value), (int64_t)(_Min)); \
@@ -179,7 +189,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:39:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IValue.h:41:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -194,7 +205,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:40:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ICategory.h:43:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -209,7 +221,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:41:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IInteger.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -224,7 +237,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:42:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IFloat.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -239,7 +253,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:43:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IRegister.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -255,7 +270,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumeration.
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumEntry.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -270,7 +286,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:44:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumeration.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -285,7 +302,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:46:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IBoolean.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -301,7 +319,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IPort.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/../Base/GCException.h:266:42: warning: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wliteral-suffix]
              throw OUT_OF_RANGE_EXCEPTION("Value = %"FMT_I64"d must be equal or greater than Min = %"FMT_I64"d", (int64_t)(_Value), (int64_t)(_Min)); \
@@ -328,7 +347,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:47:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPort.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -343,7 +363,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:48:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPortRecorder.h:36:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -358,7 +379,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:49:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPortConstruct.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -373,7 +395,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:50:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IChunkPort.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -388,7 +411,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:51:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IString.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -403,7 +427,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:52:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMap.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -418,7 +443,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:53:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMapDyn.h:37:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -430,7 +456,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:53:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMapDyn.h:102:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop )
@@ -439,7 +466,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:54:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IDestroy.h:18:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -454,7 +482,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:55:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IDeviceInfo.h:36:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -469,7 +498,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:56:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ISelector.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -484,7 +514,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:57:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ICommand.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -498,7 +529,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:57:
 In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:284:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (push) // icc -W4 complains: controlling expression is constant
@@ -512,7 +544,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38:0
 In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:41:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Persistence.h:171:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #       pragma warning( push )
@@ -533,7 +566,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/StructPort.h:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:42,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /opt/genicam2.3.1/library/CPP/include/GenApi/PortImpl.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( push )
@@ -553,7 +587,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/StructPort.h:
 /opt/genicam2.3.1/library/CPP/include/GenApi/PortImpl.h:138:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning(pop)
  ^
-In file included from ../vieworks.h:13:0,
+In file included from ../imgBuffer.h:5:0,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /usr/include/VIS-Shadow/VwCamera.h:18:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (disable:4251)
@@ -590,7 +625,8 @@ In file included from ../vieworks.h:15:0,
 ../PixelFormat/ipixelformat.h:20:9: warning:   when initialized here [-Wreorder]
          IPixelFormat(uint32_t unWidth, uint32_t unHeight, uint32_t unBpp)
          ^
-In file included from ../vieworks.h:14:0,
+In file included from ../imgBuffer.h:6:0,
+                 from ../vieworks.h:8,
                  from ../inits.cc:2:
 /usr/include/VIS-Shadow/VwImageProcess.h: At global scope:
 /usr/include/VIS-Shadow/VwImageProcess.h:9:13: warning: ‘Const1’ defined but not used [-Wunused-variable]
@@ -629,7 +665,8 @@ In file included from ../imgBuffer.h:3:0,
 In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:33,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:57:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -640,7 +677,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
 In file included from /opt/genicam2.3.1/library/CPP/include/Base/GCBase.h:36:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:33,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:120:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop ) // 4275
@@ -670,7 +708,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Log.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/Log/CLog.h:34:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (push, 3)
@@ -684,7 +723,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/log4cpp/PatternLayou
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/log4cpp/Configurator.hh:11:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( disable: 4275 ) // non dll-interface structXXX used as base
@@ -693,7 +733,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Log.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:37,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/Log/CLog.h:53:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (pop)
@@ -702,7 +743,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:37:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IBase.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -718,7 +760,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:39:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Container.h:45:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( disable : 4312 )
@@ -727,7 +770,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:38:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:43:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -739,7 +783,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:38:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INode.h:317:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop )
@@ -749,7 +794,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IValue.h:39:0
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/Base/GCException.h:266:42: warning: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wliteral-suffix]
              throw OUT_OF_RANGE_EXCEPTION("Value = %"FMT_I64"d must be equal or greater than Min = %"FMT_I64"d", (int64_t)(_Value), (int64_t)(_Min)); \
@@ -776,7 +822,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:39:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IValue.h:41:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -791,7 +838,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:40:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ICategory.h:43:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -806,7 +854,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:41:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IInteger.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -821,7 +870,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:42:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IFloat.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -836,7 +886,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:43:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IRegister.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -852,7 +903,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumeration.
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumEntry.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -867,7 +919,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:44:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IEnumeration.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -882,7 +935,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:46:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IBoolean.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -898,7 +952,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/IPort.h:34:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/../Base/GCException.h:266:42: warning: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wliteral-suffix]
              throw OUT_OF_RANGE_EXCEPTION("Value = %"FMT_I64"d must be equal or greater than Min = %"FMT_I64"d", (int64_t)(_Value), (int64_t)(_Min)); \
@@ -925,7 +980,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:47:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPort.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -940,7 +996,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:48:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPortRecorder.h:36:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -955,7 +1012,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:49:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IPortConstruct.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -970,7 +1028,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:50:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IChunkPort.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -985,7 +1044,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:51:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IString.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1000,7 +1060,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:52:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMap.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1015,7 +1076,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:53:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMapDyn.h:37:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1027,7 +1089,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:53:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/INodeMapDyn.h:102:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( pop )
@@ -1036,7 +1099,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:54:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IDestroy.h:18:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1051,7 +1115,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:55:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/IDeviceInfo.h:36:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1066,7 +1131,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:56:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ISelector.h:39:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1081,7 +1147,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:57:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/ICommand.h:38:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning ( push )
@@ -1095,7 +1162,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:57:
 In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Pointer.h:284:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (push) // icc -W4 complains: controlling expression is constant
@@ -1109,7 +1177,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:38:0
 In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:41:0,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/Persistence.h:171:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #       pragma warning( push )
@@ -1130,7 +1199,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/StructPort.h:
                  from /opt/genicam2.3.1/library/CPP/include/GenApi/GenApi.h:42,
                  from /opt/genicam2.3.1/library/CPP/include/GenICam.h:34,
                  from /usr/include/VIS-Shadow/VwCamera.h:8,
-                 from ../vieworks.h:13,
+                 from ../imgBuffer.h:5,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /opt/genicam2.3.1/library/CPP/include/GenApi/PortImpl.h:40:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning( push )
@@ -1150,7 +1220,8 @@ In file included from /opt/genicam2.3.1/library/CPP/include/GenApi/StructPort.h:
 /opt/genicam2.3.1/library/CPP/include/GenApi/PortImpl.h:138:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning(pop)
  ^
-In file included from ../vieworks.h:13:0,
+In file included from ../imgBuffer.h:5:0,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /usr/include/VIS-Shadow/VwCamera.h:18:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
  #pragma warning (disable:4251)
@@ -1194,52 +1265,54 @@ In file included from ../vieworks.h:15:0,
 ../vieworks.cc:22:12: warning: deleting ‘VWGIGE_HANDLE {aka void*}’ is undefined [enabled by default]
      delete GigE;
             ^
+../vieworks.cc: In member function ‘void vwCam::onQAppStart()’:
+../vieworks.cc:71:34: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+     char * argv[] = {"vwCam",NULL};
+                                  ^
+../vieworks.cc: In member function ‘void vwCam::setDefaults()’:
+../vieworks.cc:101:32: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char * argv[] = {"vwCam",NULL};
+                                ^
+../vieworks.cc: In static member function ‘static void vwCam::idle(const Nan::FunctionCallbackInfo<v8::Value>&)’:
+../vieworks.cc:115:12: error: request for member ‘processEvents’ in ‘obj->vwCam::app’, which is of pointer type ‘QCoreApplication*’ (maybe you meant to use ‘->’ ?)
+   obj->app.processEvents();
+            ^
 ../vieworks.cc: In static member function ‘static void vwCam::New(const Nan::FunctionCallbackInfo<v8::Value>&)’:
-../vieworks.cc:77:59: warning: ‘v8::Local<v8::Object> v8::Function::NewInstance(int, v8::Local<v8::Value>*) const’ is deprecated (declared at /home/exhibits/.node-gyp/iojs-1.4.2/deps/v8/include/v8.h:3282): Use maybe version [-Wdeprecated-declarations]
+../vieworks.cc:132:12: warning: unused variable ‘value’ [-Wunused-variable]
+     double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
+            ^
+../vieworks.cc:143:59: warning: ‘v8::Local<v8::Object> v8::Function::NewInstance(int, v8::Local<v8::Value>*) const’ is deprecated (declared at /home/exhibits/.node-gyp/iojs-1.4.2/deps/v8/include/v8.h:3282): Use maybe version [-Wdeprecated-declarations]
      info.GetReturnValue().Set(cons->NewInstance(argc, argv));
                                                            ^
 ../vieworks.cc: In member function ‘void vwCam::store(IMAGE_INFO*)’:
-../vieworks.cc:108:8: warning: unused variable ‘unWidth’ [-Wunused-variable]
-   UINT unWidth  = pImageInfo->width;
-        ^
-../vieworks.cc:109:7: warning: unused variable ‘unHeight’ [-Wunused-variable]
-  UINT unHeight  = pImageInfo->height;
-       ^
-../vieworks.cc:110:15: warning: unused variable ‘ePixelFormat’ [-Wunused-variable]
+../vieworks.cc:176:15: warning: unused variable ‘ePixelFormat’ [-Wunused-variable]
   PIXEL_FORMAT ePixelFormat = pImageInfo->pixelFormat;
                ^
 ../vieworks.cc: In member function ‘void vwCam::open()’:
-../vieworks.cc:219:35: error: ‘obj’ was not declared in this scope
-   result = CameraSetCustomCommand(obj->camera,"GainSelector","AnalogAll");
-                                   ^
-../vieworks.cc:220:43: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-   CameraSetCustomCommand(camera,"Gain","6");
-                                           ^
-../vieworks.cc:220:43: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-../vieworks.cc:223:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+../vieworks.cc:282:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
   CameraSetCustomCommand(camera,"ExposureTime","5000");
                                                      ^
-../vieworks.cc:223:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-../vieworks.cc:230:6: warning: unused variable ‘nCnt’ [-Wunused-variable]
+../vieworks.cc:282:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+../vieworks.cc:289:6: warning: unused variable ‘nCnt’ [-Wunused-variable]
   int nCnt =3;
       ^
 ../vieworks.cc: In static member function ‘static void vwCam::capture(const Nan::FunctionCallbackInfo<v8::Value>&)’:
-../vieworks.cc:249:10: warning: unused variable ‘result’ [-Wunused-variable]
+../vieworks.cc:308:10: warning: unused variable ‘result’ [-Wunused-variable]
    RESULT result = RESULT_ERROR;
           ^
 ../vieworks.cc: In static member function ‘static void vwCam::setFrameRate(const Nan::FunctionCallbackInfo<v8::Value>&)’:
-../vieworks.cc:291:99: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+../vieworks.cc:350:99: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
      result = CameraSetCustomCommand(obj->camera,"ExposureTime",to_charStar<int>((int)1000000/rate));
                                                                                                    ^
-../vieworks.cc: In static member function ‘static void vwCam::setImageGain(const Nan::FunctionCallbackInfo<v8::Value>&)’:
-../vieworks.cc:313:75: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-     result = CameraSetCustomCommand(obj->camera,"GainSelector","AnalogAll");
-                                                                           ^
-../vieworks.cc:313:75: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-../vieworks.cc:315:81: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-     result = CameraSetCustomCommand(obj->camera,"Gain",to_charStar<double>(gain));
-                                                                                 ^
-In file included from ../vieworks.h:14:0,
+../vieworks.cc: In static member function ‘static void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>&)’:
+../vieworks.cc:449:9: warning: unused variable ‘saved’ [-Wunused-variable]
+     int saved = 0;
+         ^
+../vieworks.cc:447:10: warning: unused variable ‘result’ [-Wunused-variable]
+   RESULT result = RESULT_ERROR;
+          ^
+In file included from ../imgBuffer.h:6:0,
+                 from ../vieworks.h:8,
                  from ../vieworks.cc:1:
 /usr/include/VIS-Shadow/VwImageProcess.h: At global scope:
 /usr/include/VIS-Shadow/VwImageProcess.h:9:13: warning: ‘Const1’ defined but not used [-Wunused-variable]

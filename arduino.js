@@ -36,9 +36,9 @@ var serial = function() {
     if (fxn) _this.onMessage = fxn;
     console.log('Opening serialport ' + portName);
     ser = new com.SerialPort(portName, {
-      baudrate: 115200,
+      baudRate: 115200,
       parser: com.parsers.readline('\r\n', 'binary'),
-      buffersize:bufSize,
+      buffersize:64*1024,
     });
 
     ser.on('open', function() {

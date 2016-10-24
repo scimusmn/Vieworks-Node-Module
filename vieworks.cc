@@ -9,7 +9,7 @@ char* to_charStar(T var){
   return (char*)(ss.str().c_str());
 }
 
-vwCam::vwCam(double value) : value_(value) {
+vwCam::vwCam(QObject *parent) : QObject(parent) {
 }
 
 vwCam::~vwCam() {
@@ -24,6 +24,16 @@ vwCam::~vwCam() {
   if(liveBuffer){
     delete liveBuffer;
   }
+  if(liveConv){
+    delete liveConv;
+  }
+
+  if(convertBuffer){
+    delete convertBuffer;
+  }
+
+  thread->quit();
+  //buffer->quit();
 }
 
 void vwCam::Init(v8::Local<v8::Object> exports) {
@@ -40,15 +50,29 @@ void vwCam::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "begin", begin);
   Nan::SetPrototypeMethod(tpl, "setImageGain", setImageGain);
   Nan::SetPrototypeMethod(tpl, "setFrameRate", setFrameRate);
+  Nan::SetPrototypeMethod(tpl, "getWidth", getWidth);
+  Nan::SetPrototypeMethod(tpl, "getHeight", getHeight);
   Nan::SetPrototypeMethod(tpl, "start", start);
   Nan::SetPrototypeMethod(tpl, "stop", stop);
   Nan::SetPrototypeMethod(tpl, "save", save);
+  Nan::SetPrototypeMethod(tpl, "getImage", getImage);
   Nan::SetPrototypeMethod(tpl, "capture", capture);
   Nan::SetPrototypeMethod(tpl, "stopCapture", stopCapture);
   Nan::SetPrototypeMethod(tpl, "isCapturing", isCapturing);
+  Nan::SetPrototypeMethod(tpl, "idle", idle);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("camera").ToLocalChecked(), tpl->GetFunction());
+}
+
+void vwCam::onQAppStart(){
+  if(QCoreApplication::instance() == NULL){
+    int argc = 1;
+    char * argv[] = {"vwCam",NULL};
+    //app = new QCoreApplication(argc,argv);
+    //app->exec();
+    //while(1) app->processEvents();
+  }
 }
 
 void vwCam::setDefaults(){
@@ -57,14 +81,56 @@ void vwCam::setDefaults(){
   bReady = false;
   bCapturing = false;
   numStored = 0;
+  //buffer = new imgBuffer();
+
+  /*if(thread == NULL){
+    thread = new QThread();
+    connect(thread, SIGNAL(started()),this,SLOT(onQAppStart()),Qt::DirectConnection);
+    thread->start();
+  }*/
+
+
+  /*if(connect(buffer,SIGNAL(doneSaving(int)),this,SLOT(handleSaveFinish(int)))){
+    cout << "Successfully connected" << endl;
+  }
+
+  connect(this,SIGNAL(saveSignal(string)),buffer,SLOT(save(string)));*/
+
+  //QObject::connect(buffer,&imgBuffer::finished,buffer, &QObject::deleteLater);
   //cb = NULL;
+  int argc = 1;
+  char * argv[] = {"vwCam",NULL};
+  //app = new QCoreApplication(argc,argv);
+}
+
+void vwCam::handleSaveFinish(int saved){
+  cout << "Done saving" << endl;
+  const unsigned argc = 1;
+  v8::Local<v8::Value> argv[argc] = { Nan::New((int)saved) };
+  //Nan::MakeCallback(Nan::GetCurrentContext()->Global(), saveCB, argc, argv);
+  saveCB->Call(argc,argv);
+}
+
+void vwCam::idle(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+  //obj->app->processEvents();
+  info.GetReturnValue().Set(Nan::New((int)0));
+}
+
+void vwCam::getWidth(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+  info.GetReturnValue().Set(Nan::New((int)obj->width));
+}
+
+void vwCam::getHeight(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+  info.GetReturnValue().Set(Nan::New((int)obj->height));
 }
 
 void vwCam::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if (info.IsConstructCall()) {
     // Invoked as constructor: `new vwCam(...)`
-    double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
-    vwCam* obj = new vwCam(value);
+    vwCam* obj = new vwCam();
     obj->Wrap(info.This());
     obj->setDefaults();
     obj->open();
@@ -109,15 +175,28 @@ void vwCam::store(IMAGE_INFO* pImageInfo){
 	UINT unHeight		= pImageInfo->height;
 	PIXEL_FORMAT ePixelFormat = pImageInfo->pixelFormat;
   if (bCapturing){
-    if (!buffer.store((PBYTE)pImageInfo->pImage)){
+    /*if (!buffer->store((PBYTE)pImageInfo->pImage)){
       bCapturing=false;
-      cout << "Captured " << buffer.storageNumber() << " frames" << endl;
+      cout << "Captured " << buffer->storageNumber() << " frames" << endl;
       //const unsigned argc = 1;
       //v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
       //Nan::MakeCallback(Nan::GetCurrentContext()->Global(), cb, argc, argv);
-    }
-  } //else memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
+    }*/
+  } else{
+    QMutexLocker locker( &(liveImageMutex) );
+    memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
+  }
   //numStored++;
+}
+
+void vwCam::getImage(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+
+  QMutexLocker locker( &(obj->liveImageMutex) );
+  ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveConv, obj->liveBuffer,  obj->width,obj->height );
+
+  Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)obj->liveConv,(size_t)(obj->bufferSize));
+  info.GetReturnValue().Set(ret.ToLocalChecked());
 }
 
 void vwCam::allocate(){
@@ -150,6 +229,8 @@ void vwCam::allocate(){
 	bufferSize = width*height*formatMultiplier;
 
   liveBuffer = new BYTE[bufferSize];
+  liveConv = new BYTE[bufferSize];
+  convertBuffer = new BYTE[bufferSize];
 }
 
 void vwCam::open(){
@@ -174,26 +255,6 @@ void vwCam::open(){
     cout << "GigE connection opened successfully" << endl;
   }
 
-  // cout << "VwDiscovery()";
-  // result = VwDiscovery(GigE);
-  // if(RESULT_SUCCESS != result) return;
-  //
-  // UINT nInterfaceCount = 0;
-  //
-  // result = VwGetNumInterfaces(GigE, &nInterfaceCount);
-  // if(RESULT_SUCCESS != result) return;
-  //
-  // cout << "Number of interfaces available: " << nInterfaceCount << endl;
-  //
-  // HINTERFACE hInterface;
-  // result = VwOpenInterfaceByIndex(GigE, 1, &hInterface);
-  //
-  // UINT nCameraCount = 0;
-  //
-  // result = InterfaceGetNumCameras(hInterface, &nCameraCount);
-  //
-  // cout << "Number of cameras available: " << nCameraCount << endl;
-
   ////////////////////////////////////////////////////////
   // Open camera connection
 
@@ -216,8 +277,6 @@ void vwCam::open(){
 	//camera->SetTriggerMode(false);
 	CameraSetTriggerMode(camera,false);
 	CameraSetGain(camera,GAIN_ANALOG_ALL,6);
-  //result = CameraSetCustomCommand(camera,"GainSelector","AnalogAll");
-  //CameraSetCustomCommand(camera,"Gain","6");
 
 	//camera->SetExposureTime(1000000/125);
 	CameraSetCustomCommand(camera,"ExposureTime","5000");
@@ -250,7 +309,7 @@ void vwCam::capture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if(obj->bReady){
     //obj->cb = v8::Local<v8::Function> cb = info[0].As<v8::Function>();//v8::Local<v8::Function>::New(info[0]);
     cout << "trying to capture" << endl;
-    obj->buffer.resetStore();
+    //obj->buffer->resetStore();
     obj->bCapturing = true;
     //info.GetReturnValue().Set(Nan::New((int)1));
     cout << "Began capture" << endl;
@@ -270,7 +329,7 @@ void vwCam::stopCapture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
       v8::Local<v8::Value> argv[argc] = { Nan::New((int)obj->buffer.storageNumber()) };
       Nan::MakeCallback(Nan::GetCurrentContext()->Global(), obj->cb, argc, argv);
     }*/
-    info.GetReturnValue().Set(Nan::New((int)obj->buffer.storageNumber()));
+    //info.GetReturnValue().Set(Nan::New((int)obj->buffer->storageNumber()));
   } else {
     info.GetReturnValue().Set(Nan::New((int)0));
     cout << "Camera not capturing." << endl;
@@ -310,10 +369,6 @@ void vwCam::setImageGain(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   double gain = info[0]->IsUndefined() ? 1 : info[0]->NumberValue();
   RESULT result = RESULT_ERROR;
   if(obj->bReady){
-    /*result = CameraSetCustomCommand(obj->camera,"GainSelector","AnalogAll");
-    if(result) cout << "Invalid xml string" << endl;
-    result = CameraSetCustomCommand(obj->camera,"Gain",to_charStar<double>(gain));
-    if(!result) cout << "AnalogGainAll set to " << to_charStar<double>(gain) << endl;*/
     CameraSetGain(obj->camera,GAIN_ANALOG_ALL,gain);
     if(!result) cout << "AnalogGainAll set to " << gain << endl;
     info.GetReturnValue().Set(Nan::New((int)result));
@@ -326,12 +381,17 @@ void vwCam::setImageGain(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 void vwCam::start(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
   RESULT result = RESULT_ERROR;
+  v8::Local<v8::Function> callb = info[0].As<v8::Function>();
   if(obj->bReady){
     result = CameraGrab(obj->camera);
     //result = obj->camera->Grab();
     info.GetReturnValue().Set(Nan::New((int)result));
-	  if(!result) cout << "Started camera. "<<endl;
-	  else cout << "Error while starting: "<< result << endl;
+	  if(!result) {
+      cout << "Started camera. "<<endl;
+      const unsigned argc = 1;
+      v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
+      Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callb, argc, argv);
+    } else cout << "Error while starting: "<< result << endl;
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));
     cout << "Must open camera first" << endl;
@@ -343,10 +403,10 @@ void vwCam::allocateBuffer(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   double numFrames = info[0]->IsUndefined() ? 1 : info[0]->NumberValue();
   RESULT result = RESULT_ERROR;
   if(obj->bReady){
-    obj->buffer.allocate(numFrames,obj->bufferSize);
-    info.GetReturnValue().Set(Nan::New(obj->buffer.maxFrames()));
-	  if(obj->buffer.maxFrames() == numFrames) cout << "Allocated " << numFrames << " frames. "<<endl;
-	  else cout << "Error while allocating: "<< result << endl;
+    //obj->buffer->allocate(numFrames,obj->bufferSize);
+    //info.GetReturnValue().Set(Nan::New(obj->buffer->maxFrames()));
+	  //if(obj->buffer->maxFrames() == numFrames) cout << "Allocated " << numFrames << " frames. "<<endl;
+	  //else cout << "Error while allocating: "<< result << endl;
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));
     cout << "Must open camera first" << endl;
@@ -367,198 +427,6 @@ void vwCam::stop(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   }
 }
 
-BOOL ConvertPixelFormat( PIXEL_FORMAT ePixelFormat, BYTE* pDest, BYTE* pSource, int nWidth, int nHeight )
-{
-	if ( NULL == pDest ||
-		 NULL == pSource )
-	{
-		return FALSE;
-	}
-
-	if ( 0 == nWidth || 0 == nHeight )
-	{
-		return FALSE;
-	}
-
-	BOOL bRet = TRUE;
-
-	//memcpy( pDest, pSource, nWidth * nHeight );
-	BYTE* bpConvertPixelFormat =	new BYTE[ nWidth * nHeight * 2 ];
-
-	switch( ePixelFormat )
-	{
-		//-----------------------------------------------------------------
-		// about MONO Pixel Format Series ---------------------------------
-		//-----------------------------------------------------------------
-	case PIXEL_FORMAT_MONO8:
-		memcpy( pDest, pSource, nWidth * nHeight );
-		break;
-	case PIXEL_FORMAT_MONO10:
-		VwImageProcess::ConvertMono10ToBGR8(PBYTE(pSource), nWidth*nHeight*2, pDest);
-		break;
-	case PIXEL_FORMAT_MONO12:
-		VwImageProcess::ConvertMono12ToBGR8(PBYTE(pSource), nWidth*nHeight*2, pDest);
-		break;
-	case PIXEL_FORMAT_MONO10_PACKED:
-	case PIXEL_FORMAT_MONO12_PACKED:
-		VwImageProcess::ConvertMonoPackedToBGR8( pSource,
-												UINT(1.5*nWidth*nHeight),
-												pDest );
-		break;
-	case PIXEL_FORMAT_MONO16:
-		VwImageProcess::ConvertMono16PackedToBGR8( pSource,
-												UINT(2*nWidth*nHeight),
-												pDest );
-		break;
-		//-----------------------------------------------------------------
-		// about BAYER Pixel Format Series --------------------------------
-		//-----------------------------------------------------------------
-	case PIXEL_FORMAT_BAYGR8:
-		VwImageProcess::ConvertBAYGR8ToBGR8( pSource,
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYRG8:
-		VwImageProcess::ConvertBAYRG8ToBGR8( pSource,
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYGR10:
-		VwImageProcess::ConvertBAYGR10ToBGR8( (WORD*)(pSource),
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYRG10:
-		VwImageProcess::ConvertBAYRG10ToBGR8( (WORD*)(pSource),
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYGR12:
-		VwImageProcess::ConvertBAYGR12ToBGR8( (WORD*)(pSource),
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYRG12:
-		VwImageProcess::ConvertBAYRG12ToBGR8( (WORD*)(pSource),
-											pDest,
-											nWidth,
-											nHeight );
-		break;
-	case PIXEL_FORMAT_BAYGR10_PACKED:
-		VwImageProcess::ConvertMono10PackedToMono16bit( (PBYTE)pSource,
-														nWidth,
-														nHeight,
-														bpConvertPixelFormat );
-		VwImageProcess::ConvertBAYGR10ToBGR8( (WORD*)bpConvertPixelFormat,
-												pDest,
-												nWidth,
-												nHeight );
-		break;
-	case PIXEL_FORMAT_BAYRG10_PACKED:
-		VwImageProcess::ConvertMono10PackedToMono16bit( (PBYTE)pSource,
-														nWidth,
-														nHeight,
-														bpConvertPixelFormat );
-		VwImageProcess::ConvertBAYRG10ToBGR8( (WORD*)bpConvertPixelFormat,
-												pDest,
-												nWidth,
-												nHeight );
-		break;
-	case PIXEL_FORMAT_BAYGR12_PACKED:
-		VwImageProcess::ConvertMono12PackedToMono16bit( (PBYTE)pSource,
-														nWidth,
-														nHeight,
-														bpConvertPixelFormat );
-		VwImageProcess::ConvertBAYGR12ToBGR8( (WORD*)bpConvertPixelFormat,
-												pDest,
-												nWidth,
-												nHeight );
-		break;
-	case PIXEL_FORMAT_BAYRG12_PACKED:
-		VwImageProcess::ConvertMono12PackedToMono16bit( (PBYTE)pSource,
-														nWidth,
-														nHeight,
-														bpConvertPixelFormat );
-		VwImageProcess::ConvertBAYRG12ToBGR8( (WORD*)bpConvertPixelFormat,
-													pDest,
-													nWidth,
-													nHeight );
-		break;
-	case PIXEL_FORMAT_RGB8_PACKED:
-		VwImageProcess::ConvertRGB8toBGR8( (PBYTE)pSource,
-											UINT(3*nWidth*nHeight),
-											pDest );
-		break;
-	case PIXEL_FORMAT_BGR8_PACKED:
-		bRet = FALSE;
-		break;
-	case PIXEL_FORMAT_RGB12_PACKED:
-		VwImageProcess::ConvertRGB12PackedtoBGR8( (PBYTE)pSource,
-												UINT(6*nWidth*nHeight),
-												pDest );
-		break;
-	case PIXEL_FORMAT_BGR12_PACKED:
-		bRet = FALSE;
-		break;
-	case PIXEL_FORMAT_YUV411:
-		VwImageProcess::ConvertYUV411toBGR8( (PBYTE)pSource,
-											UINT(1.5*nWidth*nHeight),
-											pDest );
-		break;
-	case PIXEL_FORMAT_YUV422_UYVY:
-		VwImageProcess::ConvertYUV422_UYVYtoBGR8( (PBYTE)pSource,
-												nWidth,
-												nHeight,
-												pDest );
-		break;
-	case PIXEL_FORMAT_YUV422_YUYV:
-		VwImageProcess::ConvertYUV422_YUYVtoBGR8( (PBYTE)pSource,
-												nWidth,
-												nHeight,
-												pDest );
-		break;
-	case PIXEL_FORMAT_YUV444:
-		VwImageProcess::ConvertYUV444toBGR8( (PBYTE)pSource,
-											UINT(1.5*nWidth*nHeight),
-											pDest );
-		break;
-	case PIXEL_FORMAT_BGR10V1_PACKED:
-		bRet = FALSE;
-		break;
-	case PIXEL_FORMAT_YUV411_10_PACKED:
-	case PIXEL_FORMAT_YUV411_12_PACKED:
-		VwImageProcess::ConvertYUV411PackedtoBGR8( (PBYTE)pSource,
-													UINT(2.25*nWidth*nHeight),
-													pDest );
-		break;
-	case PIXEL_FORMAT_YUV422_10_PACKED:
-	case PIXEL_FORMAT_YUV422_12_PACKED:
-		VwImageProcess::ConvertYUV422PackedtoBGR8( (PBYTE)pSource,
-													UINT(3*nWidth*nHeight),
-													pDest );
-		break;
-	case PIXEL_FORMAT_PAL_INTERLACED:
-	case PIXEL_FORMAT_NTSC_INTERLACED:
-		break;
-	default:
-		{
-			bRet = FALSE;
-		}
-	}
-
-	if ( NULL != bpConvertPixelFormat )
-	{
-		delete [] bpConvertPixelFormat;
-	}
-
-	return bRet;
-}
-
 using namespace std;
 using namespace v8;
 
@@ -569,17 +437,20 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   //dir = string(*cmd);
   cout << dir << " equals " << string(*cmd) << endl;
 
-  v8::Local<v8::Function> callb = info[1].As<v8::Function>();
+  //v8::Local<v8::Function> callb = info[1].As<v8::Function>();
+  obj->saveCB = new Nan::Callback(info[1].As<v8::Function>());
 
   RESULT result = RESULT_ERROR;
-  if(obj->buffer.storageNumber()){
+  if(obj->buffer->storageNumber()){
     int saved = 0;
     cout << "Saving...";
-    for (int i = 0; i < obj->buffer.storageNumber(); i++){
+    emit obj->saveSignal(dir);
+    //obj->buffer->save(dir);
+    /*for (int i = 0; i < obj->buffer.storageNumber(); i++){
       int bpp=24;
       //PBYTE buff = new BYTE[obj->bufferSize];;
-      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveBuffer, obj->buffer[i],  obj->width,obj->height );
-			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->liveBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
+      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->convertBuffer, obj->buffer[i],  obj->width,obj->height );
+			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->convertBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
       FIBITMAP * rBmp = FreeImage_Rotate(bmp,270);
       char name[256];
 			sprintf(name,"%s/%03i.jpg",dir.c_str(),i);
@@ -599,15 +470,13 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 				FreeImage_Unload(bmp);
 			}
       //if(buff) delete buff;
+    }*/
+    /*cout << "Done" << endl;
+	  if(saved ==  obj->buffer->storageNumber()){
+       cout << "Saved " << obj->buffer->storageNumber() << " frames. "<<endl;
+
     }
-    cout << "Done" << endl;
-	  if(saved ==  obj->buffer.storageNumber()){
-       cout << "Saved " << obj->buffer.storageNumber() << " frames. "<<endl;
-       const unsigned argc = 1;
-       v8::Local<v8::Value> argv[argc] = { Nan::New((int)saved) };
-       Nan::MakeCallback(Nan::GetCurrentContext()->Global(), callb, argc, argv);
-    }
-	  else cout << "Error while saving: "<< result << endl;
+	  else cout << "Error while saving: "<< result << endl;*/
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));
     cout << "Record first" << endl;

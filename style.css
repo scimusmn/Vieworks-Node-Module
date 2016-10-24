@@ -1,0 +1,11 @@
+#display {
+  position: fixed;
+  top:calc(50vh - 320px);
+  left: calc(50vw - 240px);
+  width:480px;
+  height:640px;
+}
+
+#predraw {
+  display: none;
+}
