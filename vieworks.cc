@@ -9,30 +9,37 @@ char* to_charStar(T var){
   return (char*)(ss.str().c_str());
 }
 
-vwCam::vwCam(QObject *parent) : QObject(parent) {
+vwCam::vwCam() {
+  camera = NULL;
+  GigE = NULL;
+  liveBuffer = NULL;
+  liveConv = NULL;
+  convertBuffer = NULL;
+  objectInfo = NULL;
 }
 
 vwCam::~vwCam() {
   if(camera){
-    CameraClose(camera);
-    delete camera;
+    //CameraClose(camera);
+    //delete camera;
   }
   if(GigE){
-    CloseVwGigE(GigE);
-    delete GigE;
+    //CloseVwGigE(GigE);
+    //delete GigE;
   }
   if(liveBuffer){
-    delete liveBuffer;
+    //delete liveBuffer;
   }
   if(liveConv){
-    delete liveConv;
+    //delete liveConv;
   }
 
   if(convertBuffer){
-    delete convertBuffer;
+    //delete convertBuffer;
   }
+  uv_mutex_destroy(&liveImageMutex);
 
-  thread->quit();
+  //thread->quit();
   //buffer->quit();
 }
 
@@ -44,10 +51,9 @@ void vwCam::Init(v8::Local<v8::Object> exports) {
   tpl->SetClassName(Nan::New("camera").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  // Prototype
+  //Prototype
   Nan::SetPrototypeMethod(tpl, "output", output);
   Nan::SetPrototypeMethod(tpl, "allocateBuffer", allocateBuffer);
-  Nan::SetPrototypeMethod(tpl, "begin", begin);
   Nan::SetPrototypeMethod(tpl, "setImageGain", setImageGain);
   Nan::SetPrototypeMethod(tpl, "setFrameRate", setFrameRate);
   Nan::SetPrototypeMethod(tpl, "getWidth", getWidth);
@@ -65,42 +71,14 @@ void vwCam::Init(v8::Local<v8::Object> exports) {
   exports->Set(Nan::New("camera").ToLocalChecked(), tpl->GetFunction());
 }
 
-void vwCam::onQAppStart(){
-  if(QCoreApplication::instance() == NULL){
-    int argc = 1;
-    char * argv[] = {"vwCam",NULL};
-    //app = new QCoreApplication(argc,argv);
-    //app->exec();
-    //while(1) app->processEvents();
-  }
-}
-
 void vwCam::setDefaults(){
   objectInfo = new OBJECT_INFO;
   imageBufferNumber = 12;
   bReady = false;
   bCapturing = false;
   numStored = 0;
-  //buffer = new imgBuffer();
-
-  /*if(thread == NULL){
-    thread = new QThread();
-    connect(thread, SIGNAL(started()),this,SLOT(onQAppStart()),Qt::DirectConnection);
-    thread->start();
-  }*/
-
-
-  /*if(connect(buffer,SIGNAL(doneSaving(int)),this,SLOT(handleSaveFinish(int)))){
-    cout << "Successfully connected" << endl;
-  }
-
-  connect(this,SIGNAL(saveSignal(string)),buffer,SLOT(save(string)));*/
-
-  //QObject::connect(buffer,&imgBuffer::finished,buffer, &QObject::deleteLater);
-  //cb = NULL;
-  int argc = 1;
-  char * argv[] = {"vwCam",NULL};
-  //app = new QCoreApplication(argc,argv);
+  buffer = new imgBuffer();
+  uv_mutex_init(&liveImageMutex);
 }
 
 void vwCam::handleSaveFinish(int saved){
@@ -133,7 +111,16 @@ void vwCam::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     vwCam* obj = new vwCam();
     obj->Wrap(info.This());
     obj->setDefaults();
-    obj->open();
+
+    obj->openCB = new Nan::Callback(info[0].As<v8::Function>());
+    obj->GigE	=	new VwGigE();
+    obj->pCam = new HCAMERA;
+    uv_work_t* req = new uv_work_t();
+    req->data = (void*)obj;
+
+
+    //obj->open();
+    uv_queue_work(uv_default_loop(),req,vwCam::EIO_Open,(uv_after_work_cb)vwCam::EIO_AfterOpen);
     info.GetReturnValue().Set(info.This());
   } else {
     // Invoked as plain function `vwCam(...)`, turn into construct call.
@@ -144,59 +131,19 @@ void vwCam::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   }
 }
 
-void vwCam::begin(const Nan::FunctionCallbackInfo<v8::Value>& info){
-  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
-  obj->GigE	=	new VwGigE;
-  if ( NULL == obj->GigE )
-	{
-		cout << "Error creating GigE connection" << endl;
-		//abort();
-	}
-
-  RESULT result = RESULT_ERROR;
-
-	if ( RESULT_SUCCESS != (result=OpenVwGigE(&(obj->GigE)) ))
-	{
-		Nan::ThrowError("Error opening the GigE connection");
-	} else {
-    cout << "GigE connection opened successfully" << endl;
-  }
-
-
+void vwCam::EIO_Open(uv_work_t* req) {
+  vwCam* obj = (vwCam*)(req->data);
+  obj->open();
 }
 
-void storeImage( OBJECT_INFO* pObjectInfo, IMAGE_INFO* pImageInfo ){
-	vwCam* cam = (vwCam*)pObjectInfo->pUserPointer;
-  cam->store(pImageInfo);
-}
-
-void vwCam::store(IMAGE_INFO* pImageInfo){
-  UINT unWidth		= pImageInfo->width;
-	UINT unHeight		= pImageInfo->height;
-	PIXEL_FORMAT ePixelFormat = pImageInfo->pixelFormat;
-  if (bCapturing){
-    /*if (!buffer->store((PBYTE)pImageInfo->pImage)){
-      bCapturing=false;
-      cout << "Captured " << buffer->storageNumber() << " frames" << endl;
-      //const unsigned argc = 1;
-      //v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
-      //Nan::MakeCallback(Nan::GetCurrentContext()->Global(), cb, argc, argv);
-    }*/
-  } else{
-    QMutexLocker locker( &(liveImageMutex) );
-    memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
-  }
-  //numStored++;
-}
-
-void vwCam::getImage(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
-
-  QMutexLocker locker( &(obj->liveImageMutex) );
-  ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveConv, obj->liveBuffer,  obj->width,obj->height );
-
-  Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)obj->liveConv,(size_t)(obj->bufferSize));
-  info.GetReturnValue().Set(ret.ToLocalChecked());
+void vwCam::EIO_AfterOpen(uv_work_t* req, int status) {
+  vwCam* obj = (vwCam*)(req->data);
+  cout << "After open" << endl;
+  obj->camera = *(obj->pCam);
+  obj->allocate();
+  const unsigned argc = 1;
+  v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
+  obj->openCB->Call(argc,argv);
 }
 
 void vwCam::allocate(){
@@ -241,7 +188,6 @@ void vwCam::open(){
   ////////////////////////////////////////////////////
   // open GigE connection
 
-  GigE	=	new VwGigE();
   if ( NULL == GigE )
 	{
 		cout << "Error creating GigE connection" << endl;
@@ -260,7 +206,7 @@ void vwCam::open(){
 
   cout << "Attempting to open camera..."<< endl;
   objectInfo->pUserPointer = this;
-  RESULT result2 =VwOpenCameraByIndex(GigE,0,&camera,imageBufferNumber,0,0,0,objectInfo,storeImage,NULL);
+  RESULT result2 =VwOpenCameraByIndex(GigE,0,pCam,12,0,0,0,objectInfo,vwCam::storeImage,NULL);
   //RESULT result2 = GigE->OpenCamera((UINT)0, &(camera), (imageBufferNumber), 0, 0, 0, (objectInfo), storeImage, NULL);//(*processFunction)
 
 	if(result2 != RESULT_SUCCESS){
@@ -272,16 +218,16 @@ void vwCam::open(){
   ////////////////////////////////////////////////
   // Success; set defaults on camera
 
-	objectInfo->pVwCamera = camera;
+	objectInfo->pVwCamera = *pCam;//camera;
 
 	//camera->SetTriggerMode(false);
-	CameraSetTriggerMode(camera,false);
-	CameraSetGain(camera,GAIN_ANALOG_ALL,6);
+	CameraSetTriggerMode(*pCam,false);
+	CameraSetGain(*pCam,GAIN_ANALOG_ALL,6);
 
 	//camera->SetExposureTime(1000000/125);
-	CameraSetCustomCommand(camera,"ExposureTime","5000");
+	CameraSetCustomCommand(*pCam,"ExposureTime","5000");
 	//camera->SetExposureMode(EXPOSURE_MODE_TIMED);
-	CameraSetExposureMode(camera,EXPOSURE_MODE_TIMED);
+	CameraSetExposureMode(*pCam,EXPOSURE_MODE_TIMED);
 
 	//camera->SetAcquisitionTimeOut(100);
 	//CameraSetAcquisitionTimeOut(camera,100);
@@ -293,6 +239,8 @@ void vwCam::open(){
 	//getImageSize();
 	allocate();
 
+  cout << "done opening" << endl;
+
 	bReady=true;
 }
 
@@ -303,13 +251,45 @@ void vwCam::output(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   info.GetReturnValue().Set(Nan::New(obj->outputString).ToLocalChecked());
 }
 
+void vwCam::storeImage( OBJECT_INFO* pObjectInfo, IMAGE_INFO* pImageInfo ){
+	vwCam* cam = (vwCam*)pObjectInfo->pUserPointer;
+  cam->store(pImageInfo);
+}
+
+void vwCam::store(IMAGE_INFO* pImageInfo){
+  UINT unWidth		= pImageInfo->width;
+	UINT unHeight		= pImageInfo->height;
+	PIXEL_FORMAT ePixelFormat = pImageInfo->pixelFormat;
+  if (bCapturing){
+    if (!buffer->store((PBYTE)pImageInfo->pImage)){
+      bCapturing=false;
+      cout << "Captured " << buffer->storageNumber() << " frames" << endl;
+      //const unsigned argc = 1;
+      //v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
+      //Nan::MakeCallback(Nan::GetCurrentContext()->Global(), cb, argc, argv);
+    }
+  } else{
+    //memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
+  }
+  //numStored++;
+}
+
+void vwCam::getImage(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+
+  ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveConv, obj->liveBuffer,  obj->width,obj->height );
+
+  Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)obj->liveConv,(size_t)(obj->bufferSize));
+  info.GetReturnValue().Set(ret.ToLocalChecked());
+}
+
 void vwCam::capture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
   RESULT result = RESULT_ERROR;
   if(obj->bReady){
-    //obj->cb = v8::Local<v8::Function> cb = info[0].As<v8::Function>();//v8::Local<v8::Function>::New(info[0]);
+    //obj->endCapCB = new Nan::Callback(info[0].As<v8::Function>());
     cout << "trying to capture" << endl;
-    //obj->buffer->resetStore();
+    obj->buffer->resetStore();
     obj->bCapturing = true;
     //info.GetReturnValue().Set(Nan::New((int)1));
     cout << "Began capture" << endl;
@@ -324,7 +304,7 @@ void vwCam::stopCapture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if(obj->bCapturing){
     obj->bCapturing = false;
 
-    /*if(obj->cb.IsCallable()){
+    /*if(obj->endCapCB.IsCallable()){
       const unsigned argc = 1;
       v8::Local<v8::Value> argv[argc] = { Nan::New((int)obj->buffer.storageNumber()) };
       Nan::MakeCallback(Nan::GetCurrentContext()->Global(), obj->cb, argc, argv);
@@ -334,6 +314,11 @@ void vwCam::stopCapture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     info.GetReturnValue().Set(Nan::New((int)0));
     cout << "Camera not capturing." << endl;
   }
+}
+
+void vwCam::isCapturing(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
+  info.GetReturnValue().Set(Nan::New((int)obj->bCapturing));
 }
 
 void vwCam::setFrameRate(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -357,11 +342,6 @@ void vwCam::setFrameRate(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     cout << "Must open camera first" << endl;
   }
 
-}
-
-void vwCam::isCapturing(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
-  info.GetReturnValue().Set(Nan::New((int)obj->bCapturing));
 }
 
 void vwCam::setImageGain(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -403,10 +383,10 @@ void vwCam::allocateBuffer(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   double numFrames = info[0]->IsUndefined() ? 1 : info[0]->NumberValue();
   RESULT result = RESULT_ERROR;
   if(obj->bReady){
-    //obj->buffer->allocate(numFrames,obj->bufferSize);
-    //info.GetReturnValue().Set(Nan::New(obj->buffer->maxFrames()));
-	  //if(obj->buffer->maxFrames() == numFrames) cout << "Allocated " << numFrames << " frames. "<<endl;
-	  //else cout << "Error while allocating: "<< result << endl;
+    obj->buffer->allocate(numFrames,obj->bufferSize);
+    info.GetReturnValue().Set(Nan::New(obj->buffer->maxFrames()));
+	  if(obj->buffer->maxFrames() == numFrames) cout << "Allocated " << numFrames << " frames. "<<endl;
+	  else cout << "Error while allocating: "<< result << endl;
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));
     cout << "Must open camera first" << endl;
@@ -444,39 +424,7 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if(obj->buffer->storageNumber()){
     int saved = 0;
     cout << "Saving...";
-    emit obj->saveSignal(dir);
-    //obj->buffer->save(dir);
-    /*for (int i = 0; i < obj->buffer.storageNumber(); i++){
-      int bpp=24;
-      //PBYTE buff = new BYTE[obj->bufferSize];;
-      ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->convertBuffer, obj->buffer[i],  obj->width,obj->height );
-			FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(obj->convertBuffer, obj->width,obj->height, obj->width*bpp/8, bpp, 0,0,0, true);
-      FIBITMAP * rBmp = FreeImage_Rotate(bmp,270);
-      char name[256];
-			sprintf(name,"%s/%03i.jpg",dir.c_str(),i);
-			FREE_IMAGE_FORMAT fif = FIF_JPEG;
-			FreeImage_Save(fif, rBmp, name, 0);
-      if(i==obj->buffer.storageNumber()/2){
-        FIBITMAP * thumb = FreeImage_Rescale(rBmp,obj->height/4,obj->width/4);
-        sprintf(name,"%s/thumb.jpg",dir.c_str());
-        FreeImage_Save(fif, thumb, name, 0);
-        if (thumb != NULL) FreeImage_Unload(thumb);
-      }
-      saved++;
-      if (rBmp != NULL){
-				FreeImage_Unload(rBmp);
-			}
-			if (bmp != NULL){
-				FreeImage_Unload(bmp);
-			}
-      //if(buff) delete buff;
-    }*/
-    /*cout << "Done" << endl;
-	  if(saved ==  obj->buffer->storageNumber()){
-       cout << "Saved " << obj->buffer->storageNumber() << " frames. "<<endl;
-
-    }
-	  else cout << "Error while saving: "<< result << endl;*/
+    obj->buffer->save(dir,obj->saveCB);
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));
     cout << "Record first" << endl;

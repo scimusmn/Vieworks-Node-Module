@@ -6,8 +6,7 @@
         "inits.cc",
         "vieworks.cc",
         "imgBuffer.cpp",
-        "<!(moc vieworks.h -o moc_vieworks.cpp && echo moc_vieworks.cpp)" ,
-        "<!(moc imgBuffer.h -o moc_imgBuffer.cpp && echo moc_imgBuffer.cpp)" ],
+      ],
       "libraries": [
         "/usr/lib/libfreeimage.so.3",
         "/usr/lib/libVwGigE.so",

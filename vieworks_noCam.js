@@ -1,6 +1,7 @@
 
 "use strict";
 
+var vieworks = require('bindings')('vieworks');
 window.arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
@@ -19,6 +20,60 @@ var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
 var webSock = null;
 
+wss.broadcast = function(data){
+  wss.clients.forEach(function each(client) {
+    client.send(data);
+  });
+}
+
+var cam = new vieworks.camera(function(){
+  cam.setFrameRate(200);
+  cam.setImageGain(3.99);
+
+  cam.allocateBuffer(1000);
+
+  var pre = document.createElement('canvas');
+  var can = document.querySelector('#display');
+
+  cam.start(function(val){
+    /*cam.ready = true;
+    var ctx = can.getContext('2d');
+    var ptx = pre.getContext('2d');
+
+    var w = Math.ceil(cam.getWidth());
+    var h = Math.ceil(cam.getHeight());
+    can.width = h;
+    can.height = w;
+
+    pre.width = w;
+    pre.height = h;
+
+    setInterval(()=>{
+      if(!cam.isCapturing()){
+        var t = cam.getImage();
+        if(t&&t.length>=w*h*3){
+          var im = ptx.createImageData(w,h);
+          var con = new Uint8ClampedArray(w*h*4);
+          for(let i=0,j=0; i< t.length; i+=4,j+=3){
+            //var p = palette(t[i]);
+            con[i] = t[j+2]*1.1;
+            con[i+1] = t[j+1];
+            con[i+2] = t[j];
+            con[i+3] = 255;
+          }
+          im.data.set(con);
+          ptx.putImageData(im,0,0);
+
+          ctx.save();
+          ctx.translate(200,240);
+          ctx.rotate(Math.PI/2);
+          ctx.drawImage(pre,-320,-240);
+          ctx.restore();
+        }
+      }
+    },50);*/
+  });
+});
 
 var cState = false;
 
@@ -52,6 +107,7 @@ let resetIdleTimeout = () => {
 resetIdleTimeout();
 
 var loopPractice = () => {
+  cam.ready=false;
   arduino.digitalWrite(9, 0);
   console.log('Loop practice');
   setTimeout(() => {
@@ -99,7 +155,15 @@ var redEntranceLight = (state) => {
 var justRecorded = false;
 
 var save = (dir) => {
-
+  cam.save(dir, function() {
+    //cam.stop();
+    console.log('seq=' + 'sequences/temp' + (dirNum - 1));
+    //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
+    if (wss) wss.broadcast('seq=' + 'sequences\\temp' + (dirNum - 1));
+    console.log('saved to ' + dir);
+    cam.ready = true;
+    justRecorded = false;
+  });
 };
 
 var pollLight = new function(){
@@ -165,6 +229,7 @@ var countdown = (count) => {
     // }
     if(count<4) audio[count].play();
     setTimeout(() => { countdown(count - 1); }, 1000);
+    if(count == 1 ) cam.capture();
   } else {
     //longBeep.play();
     audio[count].play();
@@ -179,6 +244,7 @@ var countdown = (count) => {
 
     setTimeout(function() {
       //beep.play();
+      cam.stopCapture();
       pollLight.stopBlink();
       pollLight.setRed();
       console.log('done capturing');
@@ -213,10 +279,6 @@ window.startCntdn = function(pin, state) {
     redEntranceLight( 1);
   }
 
-  /*if (!cState && !state){
-    countdown(9);
-    cState = true;
-  }*/
 };
 
 arduino.connect(cfg.portName, function() {
@@ -257,13 +319,73 @@ arduino.connect(cfg.portName, function() {
   arduino.digitalWrite(6,1);
   arduino.digitalWrite(4,1);
 
-  //greenExitLight(0);
-  //redExitLight(1);
-  //greenEntranceLight( 1);
-  //redEntranceLight( 0);
+  greenExitLight(0);
+  redExitLight(1);
+  greenEntranceLight( 1);
+  redEntranceLight( 0);
 
 });
 
 var dirNum = 0;
 
 ///////////////////////////////////////////////////////////////////////
+
+function readDir(path) {
+  var files = fs.readdirSync(path);
+
+  files.sort(function(a, b) {
+    return fs.statSync('./' + path + a).atime.getTime() - fs.statSync('./' + path + b).atime.getTime();
+  });
+
+  for (var i = 0; i < files.length; i++) {
+    files[i] = path + files[i];
+  }
+
+  return files;
+}
+
+var changedFile;
+
+//Tell the wsServer what to do on connnection to a client;
+
+wss.on('connection', function(ws) {
+
+  var files = readDir('app/sequences/');
+  var celFiles = readDir('app/celeb_seq/');
+  if (ws) {
+    for (var i = 0; i < files.length; i++) {
+      //var num = fs.readdirSync(files[i]).length;
+      ws.send('seq=' + files[i].substring(4));
+    }
+
+    for (var i = 0; i < celFiles.length; i++) {
+      //var num = fs.readdirSync(celFiles[i]).length;
+      ws.send('cel=' + celFiles[i].substring(4));
+    }
+  }
+
+  ws.on('message', function(message) {
+    //console.log('received: %s', message);
+  });
+
+  ws.on('close', function() {
+    webSock = null;
+  });
+
+  ws.on('error', function(error) {
+    webSock = null;
+    console.log('Error: ' + error);
+  });
+});
+
+function onOpen() {
+
+}
+
+document.onkeypress = (e) => {
+  var press = String.fromCharCode(e.keyCode);
+  if(press == 'g') {
+    showGo();
+  } else if(press == 'c') startCntdn();
+  else if(press == 'r') justRecorded = false;
+}

@@ -4,7 +4,7 @@
 
 
 
-imgBuffer::imgBuffer(QObject * parent) : QThread(parent){
+imgBuffer::imgBuffer(){
 	nStored=0;
 	buffers=0;
 	nBuf=0;
@@ -247,7 +247,7 @@ void imgBuffer::run() {
 		//if(buff) delete buff;
 	}
 	cout << "Done saving." << endl;
-	emit doneSaving(saved);
+	//emit doneSaving(saved);
 }
 
 void imgBuffer::allocate(int num, int size){
@@ -284,9 +284,52 @@ bool imgBuffer::store(PBYTE pbuf){
 	return 0;
 }
 
-void imgBuffer::save(string d){
+void imgBuffer::save(string d, Nan::Callback* scb){
 	saveDir = d;
-	this->start();
+	saveCB = scb;
+	uv_work_t* req = new uv_work_t();
+	req->data = (void*)this;
+	uv_queue_work(uv_default_loop(),req,imgBuffer::EIO_Save,(uv_after_work_cb)imgBuffer::EIO_AfterSave);
+}
+
+void imgBuffer::EIO_Save(uv_work_t * req) {
+	imgBuffer* ib = (imgBuffer*)req->data;
+	int saved = 0;
+	cout << "saving..." << endl;
+	for (int i = 0; i < ib->storageNumber()-1; i++){
+		int bpp=24;
+		//PBYTE buff = new BYTE[obj->bufferSize];;
+		ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, ib->convertBuffer, ib->buffers[i],  640,480 );
+		FIBITMAP * bmp	= FreeImage_ConvertFromRawBits(ib->convertBuffer, 640,480, 640*bpp/8, bpp, 0,0,0, true);
+		FIBITMAP * rBmp = FreeImage_Rotate(bmp,270);
+		char name[256];
+		sprintf(name,"%s/%03i.jpg",ib->saveDir.data(),i);
+		FREE_IMAGE_FORMAT fif = FIF_JPEG;
+		FreeImage_Save(fif, rBmp, name, 0);
+		if(i==ib->storageNumber()/2){
+			FIBITMAP * thumb = FreeImage_Rescale(rBmp,480/4,640/4);
+			sprintf(name,"%s/thumb.jpg",ib->saveDir.data());
+			FreeImage_Save(fif, thumb, name, 0);
+			if (thumb != NULL) FreeImage_Unload(thumb);
+		}
+		saved++;
+		if (rBmp != NULL){
+			FreeImage_Unload(rBmp);
+		}
+		if (bmp != NULL){
+			FreeImage_Unload(bmp);
+		}
+		//if(buff) delete buff;
+	}
+	cout << "Done saving." << endl;
+	//emit doneSaving(saved);
+}
+
+void imgBuffer::EIO_AfterSave(uv_work_t * req, int status) {
+	imgBuffer* ib = (imgBuffer*)req->data;
+	const unsigned argc = 1;
+  v8::Local<v8::Value> argv[argc] = { Nan::New((int)1) };
+  ib->saveCB->Call(argc,argv);
 }
 
 void imgBuffer::resetStore(){

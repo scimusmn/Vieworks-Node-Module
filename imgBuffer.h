@@ -1,14 +1,13 @@
 #pragma once
 #include <iostream>
+#include <nan.h>
 #include <VwGigE.Global.h>
 #include "VwGigE.API.h"
 #include "VwCamera.h"
 #include "VwImageProcess.h"
-#include <QtCore/QThread>
 #include "FreeImage.h"
 
-class imgBuffer : public QThread {
-	Q_OBJECT
+class imgBuffer {
 
 protected:
 	PBYTE* buffers;
@@ -18,8 +17,9 @@ protected:
 	UINT nStored;
 	PBYTE convertBuffer;
 	string saveDir;
+	Nan::Callback* saveCB;
 public:
-	imgBuffer(QObject *parent = 0);
+	imgBuffer();
 	~imgBuffer();
 	void allocate(int num, int size);
 	bool store(PBYTE pbuf);
@@ -35,10 +35,11 @@ public:
 	void setSaveDirectory(string d){ saveDir = d.c_str();}
 	PBYTE operator[](int i);
 	PBYTE currentFrame();
-signals:
-	void doneSaving(int);
-public slots:
-	void save(string d);
+
+	static void EIO_Save(uv_work_t* req);
+  static void EIO_AfterSave(uv_work_t* req, int);
+public:
+	void save(string d, Nan::Callback*);
 protected:
 	void run();
 };

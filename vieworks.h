@@ -24,8 +24,7 @@ using namespace PixelFormat;
 
 #include "FreeImage.h"
 
-class vwCam : public QObject, public Nan::ObjectWrap {
-  Q_OBJECT
+class vwCam : public Nan::ObjectWrap {
 
  public:
   static void Init(v8::Local<v8::Object> exports);
@@ -38,13 +37,9 @@ class vwCam : public QObject, public Nan::ObjectWrap {
    imgBuffer *buffer;
    VWGIGE_HANDLE GigE;
    HCAMERA camera;
+   HCAMERA * pCam;
    BITMAPINFO* BmpInfo1;
    IPixelFormat* piPixelFormat;
-   QCoreApplication * app = NULL;
-   QThread * thread = NULL;
-
-   QMutex              liveImageMutex;
-
 	 UINT imageBufferNumber;
 	 OBJECT_INFO* objectInfo;
    PBYTE liveBuffer;
@@ -57,11 +52,14 @@ class vwCam : public QObject, public Nan::ObjectWrap {
    std::string outputString;
 
    Nan::Callback* saveCB;
+   Nan::Callback* openCB;
+   Nan::Callback* endCapCB;
 
-  explicit vwCam(QObject *parent = 0);
+   uv_mutex_t liveImageMutex;
+
+  explicit vwCam();
   virtual ~vwCam();
 
-  static void begin(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void allocateBuffer(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -85,11 +83,12 @@ class vwCam : public QObject, public Nan::ObjectWrap {
   static Nan::Persistent<v8::Function> constructor;
   double value_;
 
-signals:
-  void saveSignal(string);
-public slots:
+  static void EIO_Open(uv_work_t* req);
+  static void EIO_AfterOpen(uv_work_t* req, int);
+  static void storeImage(OBJECT_INFO*, IMAGE_INFO*);
+
+public:
   void handleSaveFinish(int);
-  void onQAppStart();
 
 protected:
   void run();
