@@ -193,8 +193,8 @@ var Arduino = function() {
   };
 
   this.digitalWrite = function(pin, state) {
-    if (pin <= 13) sp.send([START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)]);
-    else console.log('Pin must be less than or equal to 13');
+    if (pin <= 15) sp.send([START + DIGI_WRITE + ((pin & 15) << 1) + (state & 1)]);
+    else console.log('Pin must be less than or equal to 15');
   };
 
   this.digitalRead = function(pin) {

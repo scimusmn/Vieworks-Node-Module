@@ -6,24 +6,32 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div>
+    <!-- <div>
       <h1>Hello World!</h1>
-      <!-- All of the Node.js APIs are available in this renderer process. -->
       We are using node <script>document.write(process.versions.node)</script>,
       Chromium <script>document.write(process.versions.chrome)</script>,
       and Electron <script>document.write(process.versions.electron)</script>.
-      <audio id='beep' src='assets/audio/beep.mp3'></audio>
-      <audio id='longBeep' src='assets/audio/long_beep.mp3'></audio>
-      <audio id='click' src='assets/audio/click.mp3'></audio>
-      <audio id='audio_3' src='assets/audio/three.mp3'></audio>
-      <audio id='audio_2' src='assets/audio/two.mp3'></audio>
-      <audio id='audio_1' src='assets/audio/one.mp3'></audio>
-      <audio id='audio_0' src='assets/audio/go.mp3'></audio>
-    </div>
+    </div> -->
     <div>
       <canvas id="predraw"></canvas>
       <canvas id="display"></canvas>
+      <div id='controls'>
+        <div id='start'>Start Countdown</div>
+        <div>Folder: <input type="text" value="./new_celebs/" id='folder'></input></div>
+        <div id='save'>Save files</div>
+        <br />
+        <div id='output'>Please Wait...</div>
+      </div>
+
     </div>
+    <audio id='beep' src='assets/audio/beep.mp3'></audio>
+    <audio id='longBeep' src='assets/audio/long_beep.mp3'></audio>
+    <audio id='click' src='assets/audio/click.mp3'></audio>
+    <audio id='getReady' src='assets/audio/get-ready.mp3'></audio>
+    <audio id='audio_3' src='assets/audio/three.mp3'></audio>
+    <audio id='audio_2' src='assets/audio/two.mp3'></audio>
+    <audio id='audio_1' src='assets/audio/one.mp3'></audio>
+    <audio id='audio_0' src='assets/audio/go.mp3'></audio>
   </body>
 
   <script>

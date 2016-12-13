@@ -22,7 +22,7 @@ include([], function() {
 			bPlaying=false,
 			bLoading = false;		//keeps track of whether or not the images are loaded.
 		var imgDir="default/";	//storing the name of the directory which we are currently browsing.
-		var numImg = 600;
+		var numImg = 1600;
 
 		var imgPad=20;
 

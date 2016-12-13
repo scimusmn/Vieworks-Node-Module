@@ -58,7 +58,7 @@ void vwCam::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "setFrameRate", setFrameRate);
   Nan::SetPrototypeMethod(tpl, "getWidth", getWidth);
   Nan::SetPrototypeMethod(tpl, "getHeight", getHeight);
-  Nan::SetPrototypeMethod(tpl, "start", start);
+  Nan::SetPrototypeMethod(tpl, "startCapture", start);
   Nan::SetPrototypeMethod(tpl, "stop", stop);
   Nan::SetPrototypeMethod(tpl, "save", save);
   Nan::SetPrototypeMethod(tpl, "getImage", getImage);
@@ -79,6 +79,8 @@ void vwCam::setDefaults(){
   numStored = 0;
   buffer = new imgBuffer();
   uv_mutex_init(&liveImageMutex);
+  uv_async_init(uv_default_loop(),&liveImageAsync,vwCam::LiveImageCB);
+  bLiveCap = false;
 }
 
 void vwCam::handleSaveFinish(int saved){
@@ -207,7 +209,6 @@ void vwCam::open(){
   cout << "Attempting to open camera..."<< endl;
   objectInfo->pUserPointer = this;
   RESULT result2 =VwOpenCameraByIndex(GigE,0,pCam,12,0,0,0,objectInfo,vwCam::storeImage,NULL);
-  //RESULT result2 = GigE->OpenCamera((UINT)0, &(camera), (imageBufferNumber), 0, 0, 0, (objectInfo), storeImage, NULL);//(*processFunction)
 
 	if(result2 != RESULT_SUCCESS){
 		cout << "Camera failed to open with code " << result << endl;
@@ -220,24 +221,13 @@ void vwCam::open(){
 
 	objectInfo->pVwCamera = *pCam;//camera;
 
-	//camera->SetTriggerMode(false);
 	CameraSetTriggerMode(*pCam,false);
 	CameraSetGain(*pCam,GAIN_ANALOG_ALL,6);
 
-	//camera->SetExposureTime(1000000/125);
 	CameraSetCustomCommand(*pCam,"ExposureTime","5000");
-	//camera->SetExposureMode(EXPOSURE_MODE_TIMED);
 	CameraSetExposureMode(*pCam,EXPOSURE_MODE_TIMED);
 
-	//camera->SetAcquisitionTimeOut(100);
-	//CameraSetAcquisitionTimeOut(camera,100);
-
 	int nCnt =3;
-
-	//camera->GetHeartBeatTimeoutTryCount(nCnt);
-
-	//getImageSize();
-	allocate();
 
   cout << "done opening" << endl;
 
@@ -251,11 +241,40 @@ void vwCam::output(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   info.GetReturnValue().Set(Nan::New(obj->outputString).ToLocalChecked());
 }
 
+livePack imgPack;
+
 void vwCam::storeImage( OBJECT_INFO* pObjectInfo, IMAGE_INFO* pImageInfo ){
 	vwCam* cam = (vwCam*)pObjectInfo->pUserPointer;
-  cam->store(pImageInfo);
+  if(cam->bCapturing) cam->store(pImageInfo);
+  else if(cam->bLiveCap){
+    imgPack.objInfo = pObjectInfo;
+    imgPack.imgInfo = pImageInfo;
+    cam->liveImageAsync.data = (void*)(&imgPack);
+    uv_async_send(&(cam->liveImageAsync));
+  }
 }
 
+void vwCam::LiveImageCB(uv_async_t* req){
+  OBJECT_INFO* objInfo = ((livePack*)req->data)->objInfo;
+  IMAGE_INFO* imgInfo = ((livePack*)req->data)->imgInfo;
+  vwCam* cam = (vwCam*)(objInfo->pUserPointer);
+  PBYTE img = (PBYTE)(imgInfo->pImage);
+  UINT unWidth		= imgInfo->width;
+	UINT unHeight		= imgInfo->height;
+	PIXEL_FORMAT ePixelFormat = imgInfo->pixelFormat;
+  const unsigned argc = 1;
+  ConvertPixelFormat( ePixelFormat, cam->liveConv, img,  unWidth,unHeight ); //
+  Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)cam->liveConv,(size_t)(cam->bufferSize));
+  v8::Local<v8::Value> argv[argc] = {ret.ToLocalChecked() };
+  cam->liveCapCB.Call(argc,argv);
+  cam->bLiveCap = false;
+}
+
+//Function called to actually store the image to the image buffers. Will stop
+//capturing if the image buffer fills up.
+
+//TODO: for some reason, if the else statement is left active, it screws up
+// image acquisition over time; investigate.
 void vwCam::store(IMAGE_INFO* pImageInfo){
   UINT unWidth		= pImageInfo->width;
 	UINT unHeight		= pImageInfo->height;
@@ -270,17 +289,34 @@ void vwCam::store(IMAGE_INFO* pImageInfo){
     }
   } else{
     //memcpy(liveBuffer,(PBYTE)pImageInfo->pImage,unWidth*unHeight);
+    //imgPack
+    /*if(bLiveCap){
+      const unsigned argc = 1;
+      ConvertPixelFormat( ePixelFormat, liveConv, (PBYTE)pImageInfo->pImage,  unWidth,unHeight ); //
+      Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)liveConv,(size_t)(bufferSize));
+      v8::Local<v8::Value> argv[argc] = {ret.ToLocalChecked() };
+      liveCapCB.Call(argc,argv);
+      bLiveCap = false;
+      //liveCapCB.Reset();
+    }*/
   }
   //numStored++;
 }
 
+//This would pass the current, live image from the camera as a javascript array,
+// if it could actually reliably pass the data.
 void vwCam::getImage(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   vwCam* obj = ObjectWrap::Unwrap<vwCam>(info.Holder());
 
-  ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveConv, obj->liveBuffer,  obj->width,obj->height );
+  if(!obj->bLiveCap){
+    obj->liveCapCB.SetFunction(info[0].As<v8::Function>());
+    obj->bLiveCap = true;
+  }
+
+  /*ConvertPixelFormat( PIXEL_FORMAT_BAYGR8, obj->liveConv, obj->liveBuffer,  obj->width,obj->height );
 
   Nan::MaybeLocal<Object> ret = Nan::CopyBuffer((char*)obj->liveConv,(size_t)(obj->bufferSize));
-  info.GetReturnValue().Set(ret.ToLocalChecked());
+  info.GetReturnValue().Set(ret.ToLocalChecked());*/
 }
 
 void vwCam::capture(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -423,7 +459,7 @@ void vwCam::save(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   RESULT result = RESULT_ERROR;
   if(obj->buffer->storageNumber()){
     int saved = 0;
-    cout << "Saving...";
+    cout << "Saving..." << endl;
     obj->buffer->save(dir,obj->saveCB);
   } else {
     info.GetReturnValue().Set(Nan::New((int)RESULT_ERROR));

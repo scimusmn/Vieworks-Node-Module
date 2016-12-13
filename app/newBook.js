@@ -17,7 +17,7 @@ include([], function() {
       _this.loading = false;    //keeps track of whether or not the images are loaded.
       _this.curDir = 'default/';  //storing the name of the directory which we are currently browsing.
       _this.size = 0;
-      _this.numImages = 600;
+      _this.numImages = 800;
 
       var imgPad = 20;
 
@@ -54,7 +54,7 @@ include([], function() {
         _this.frames = [];
         _this.loaded = false;
 
-        //_this.width = _this.width;      //this clears the html5 _this, for some reason
+        //_this.width = _this.width;
 
         for (let x = 1; x <= num; x++) {
           let imageObj = new Image();                       // new instance for each image

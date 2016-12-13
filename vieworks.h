@@ -1,6 +1,8 @@
 #ifndef VWCAM_H
 #define VWCAM_H
 
+#define LOG4CPP_FIX_ERROR_COLLISION 1
+
 #include <nan.h>
 
 #include <iostream>
@@ -48,14 +50,16 @@ class vwCam : public Nan::ObjectWrap {
    UINT formatMultiplier;
    PIXEL_FORMAT pixelFormat;
    UINT width,height,bufferSize,numStored;
-   bool bReady,bCapturing;
+   bool bReady,bCapturing, bLiveCap;
    std::string outputString;
 
    Nan::Callback* saveCB;
    Nan::Callback* openCB;
    Nan::Callback* endCapCB;
+   Nan::Callback liveCapCB;
 
    uv_mutex_t liveImageMutex;
+   uv_async_t liveImageAsync;
 
   explicit vwCam();
   virtual ~vwCam();
@@ -85,13 +89,20 @@ class vwCam : public Nan::ObjectWrap {
 
   static void EIO_Open(uv_work_t* req);
   static void EIO_AfterOpen(uv_work_t* req, int);
+  static void LiveImageCB(uv_async_t* req);
   static void storeImage(OBJECT_INFO*, IMAGE_INFO*);
+
 
 public:
   void handleSaveFinish(int);
 
 protected:
   void run();
+};
+
+struct livePack {
+  OBJECT_INFO* objInfo;
+  IMAGE_INFO* imgInfo;
 };
 
 BOOL ConvertPixelFormat( PIXEL_FORMAT ePixelFormat, BYTE* pDest, BYTE* pSource, int nWidth, int nHeight );

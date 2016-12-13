@@ -1,4 +1,7 @@
 #pragma once
+
+#define LOG4CPP_FIX_ERROR_COLLISION 1
+
 #include <iostream>
 #include <nan.h>
 #include <VwGigE.Global.h>

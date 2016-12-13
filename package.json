@@ -4,7 +4,7 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "env GENICAM_ROOT_V2_3=/opt/genicam2.3.1/ electron main.js --enable-logging"
+    "start": "env GENICAM_ROOT_V2_3=/opt/genicam2.3.1/ electron main.js --enable-logging --debug=5858"
   },
   "repository": {
     "type": "git",

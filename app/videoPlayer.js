@@ -10,7 +10,7 @@ include(['newBook.js', 'slider.js', 'toggleButton.js'], function() {
       _this.player = new FlipBook();
       _this.appendChild(_this.player);
 
-      _this.player.init(600);
+      _this.player.init(800);
 
       _this.button = new ToggleButton();
       _this.button.setAttribute('active', 'assets/pngs/playButton.png');

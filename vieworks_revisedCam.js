@@ -1,7 +1,7 @@
 
 "use strict";
 
-var vieworks = require('bindings')('vieworks');
+var cam = require('./vwCam.js').cam;
 window.arduino = require('./arduino.js').arduino;
 var serial = require('./arduino.js').serial;
 var cfg = require('./config.js').config;
@@ -26,62 +26,13 @@ wss.broadcast = function(data){
   });
 }
 
-var output = document.querySelector('#output');
+cam.onStart = ()=>{
 
-var cam = new vieworks.camera(function(){
-  cam.setFrameRate(200);
-  cam.setImageGain(6);
+}
 
-  cam.allocateBuffer(1600);
-
-  var pre = document.querySelector('#predraw');
-  var can = document.querySelector('#display');
-
-  cam.startCapture(function(val){
-    cam.ready = true;
-    var ctx = can.getContext('2d');
-    var ptx = pre.getContext('2d');
-
-    var w = Math.ceil(cam.getWidth());
-    var h = Math.ceil(cam.getHeight());
-    console.log(w + ' is w and h is ' + h);
-    can.width = h;
-    can.height = w;
-
-    pre.width = w;
-    pre.height = h;
-
-    setInterval(()=>{
-      if(!cam.isCapturing()){
-        var t = cam.getImage(function(t){
-          if(t&&t.length>=w*h*3){
-            var im = ptx.createImageData(w,h);
-            var con = new Uint8ClampedArray(w*h*4);
-            for(let i=0,j=0; j< t.length; i+=4,j+=3){
-              //var p = palette(t[i]);
-              con[i] = t[j+2];
-              con[i+1] = t[j+1];
-              con[i+2] = t[j];
-              con[i+3] = 255;
-            }
-            im.data.set(con);
-            ptx.fillStyle = 'black';
-            ptx.putImageData(im,0, 0);
-
-            ctx.save();
-            ctx.translate(can.width/2,can.height/2);
-            ctx.rotate(Math.PI/2);
-            ctx.drawImage(pre,-pre.width/2,-pre.height/2);
-            //ctx.drawImage(pre,-320,-240);
-            ctx.restore();
-          }
-        });
-      }
-    },50);
-  });
-
-  output.textContent = 'Ready to record';
-});
+cam.onReady = ()=>{
+  cam.start();
+}
 
 var cState = false;
 
@@ -93,9 +44,6 @@ longBeep.load();
 
 let clickTrack = document.querySelector('#click');
 clickTrack.load();
-
-let getReady = document.querySelector('#getReady');
-getReady.load();
 
 let audio = [];
 
@@ -118,79 +66,59 @@ let resetIdleTimeout = () => {
 resetIdleTimeout();
 
 var loopPractice = () => {
-  cam.ready=false;
-  arduino.digitalWrite(13, 0);
+  arduino.digitalWrite(9, 0);
   console.log('Loop practice');
   setTimeout(() => {
-    arduino.digitalWrite(13, 1);
+    arduino.digitalWrite(9, 1);
   }, 100);
 };
 
 var showGo = () => {
-  arduino.digitalWrite(12, 0);
+  arduino.digitalWrite(4, 0);
   console.log('Show go');
   setTimeout(() => {
-    arduino.digitalWrite(12, 1);
+    arduino.digitalWrite(4, 1);
     setTimeout(() => {
       loopPractice();
-    }, 22000);
+    }, 10000);
   }, 100);
 };
 
 var alternateVideo = () => {
-  arduino.digitalWrite(11, 0);
+  arduino.digitalWrite(6, 0);
   console.log("alternate");
   setTimeout(() => {
-    arduino.digitalWrite(11, 1);
+    arduino.digitalWrite(6, 1);
   }, 100);
 };
 
 var greenExitLight = (state) => {
-  arduino.digitalWrite(3, state);
+  arduino.digitalWrite(11, state);
 };
 
 var redExitLight = (state) => {
-  arduino.digitalWrite(4, state);
+  arduino.digitalWrite(10, state);
 };
 
 var greenEntranceLight = (state) => {
-  arduino.digitalWrite(5, state);
+  arduino.digitalWrite(3, state);
   if (state) showGo();
 };
 
 var redEntranceLight = (state) => {
-  arduino.digitalWrite(6, state);
+  arduino.digitalWrite(5, state);
   if (state) loopPractice();
 };
 
-var waitForSave = false;
-var cageOccupied = false;
 
-window.save = (dir,saveOther) => {
-  if (fs.existsSync(dir)) deleteFolderRecursive(dir);
-  fs.mkdirSync(dir);
-  output.textContent = 'Saving...';
-  cam.save(dir, function() {
-    //cam.stop();
-    output.textContent = 'Done Saving.';
-    fs.utimesSync(dir,NaN,NaN);
-    console.log('seq=' + dir);
-    //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
-    if (wss&&!saveOther) wss.broadcast('seq=' + 'sequences\\temp' + (dirNum - 1));
-    console.log('saved to ' + dir);
-    cam.ready = true;
-    waitForSave = false;
-  });
-};
-
-var startBut = document.querySelector('#start');
-var saveBut = document.querySelector('#save');
-
-saveBut.onclick = (e)=>{
-  //console.log(document.querySelector('#folder').value);
-  save(document.querySelector('#folder').value,true);
+cam.onSave = (dir)=>{
+  //cam.stop();
+  console.log('seq=' + 'sequences/temp' + (dirNum - 1));
+  //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
+  if (wss) wss.broadcast('seq=' + 'sequences\\temp' + (dirNum - 1));
+  console.log('saved to ' + dir);
+  fs.utimesSync(dir,NaN,NaN);
 }
-
 
 var pollLight = new function(){
   var cInt = null;
@@ -199,53 +127,30 @@ var pollLight = new function(){
   //var cArr = [64,2,1,16,32,115];
   //var cArr = [64,66,67,83,115,115];
   //var cArr = [115,83,67,66,64,64];
-  //pin 7 = red, 8 =gr 9 =yellow3 10 = y2, 14 = y1
-  var pole = [7,8,9,10,15];
-  var cArr = [[0,1,1,1,1],
-              [0,0,1,1,1],
-              [0,0,0,1,1],
-              [0,0,0,0,1],
-              [0,0,0,0,0],
-              [0,0,0,0,0]
-            ];
-
-  console.log(cArr[0])
+  var cArr = [51,19,3,2,0,0];
   //var cArr = [1, 3, 11, 27, 59, 123];
   var cCount = 0;
 
   this.setGreen = function(){
-    //arduino.wireSend(8,[32]);
-    for(let i=0; i<5; i++){
-      arduino.digitalWrite(pole[i], 0);
-    }
-    arduino.digitalWrite(8, 1);
+    arduino.wireSend(8,[32]);
   }
 
   this.setRed = function(){
-    //arduino.wireSend(8,[64]);
-    for(let i=0; i<5; i++){
-      arduino.digitalWrite(pole[i],0);
-    }
-    arduino.digitalWrite(7, 1);
+    arduino.wireSend(8,[64]);
   }
 
   this.setStage = function(count){
     //arduino.wireSend(8,[0]);
     //setInterval(()=>{
-       //arduino.wireSend(8,[cArr[count]]);
+      arduino.wireSend(8,[cArr[count]]);
       //if(++cCount>=6) cCount = 0;
     //},500);
-    for(let i=0; i<5; i++){
-      arduino.digitalWrite(pole[i], cArr[count][i]);
-    }
   }
 
   this.blink = function () {
     cCount = 1;
     cInt = setInterval(()=>{
-      for(let i=1; i<5; i++){
-        arduino.digitalWrite(pole[i], ((cCount)?1:0));
-      }
+      arduino.wireSend(8,[51*cCount]);
       cCount=!cCount;
     },250);
   }
@@ -269,24 +174,17 @@ var deleteFolderRecursive = function(path) {
   }
 };
 
-var blinkInt = null;
-var blinkBool = 1;
-
 var countdown = (count) => {
   pollLight.setStage(count);
-
   if (count > 0) {
-    output.textContent = count;
     // if(audio[i+1]&&!audio[i+1].paused){
     //   beep.pause();
     //   beep.currentTime = 0;
     // }
     if(count<4) audio[count].play();
     setTimeout(() => { countdown(count - 1); }, 1000);
-    if(count == 1 ) cam.capture();
-    else if(count == 5) getReady.play();
+    if(count == 1 ) cam.record();
   } else {
-    output.textContent = 'Recording...';
     //longBeep.play();
     audio[count].play();
     clickTrack.play();
@@ -295,25 +193,22 @@ var countdown = (count) => {
     //}
     pollLight.blink();
     //longBeep.play();
-    //cam.capture();
     console.log('start capture');
 
     setTimeout(function() {
       //beep.play();
-      output.textContent = 'Done Recording';
-      cam.stopCapture();
+      cam.stopRecord();
       pollLight.stopBlink();
       pollLight.setRed();
       console.log('done capturing');
       var dir = './app/sequences/temp' + dirNum++;
       if(dirNum>=21) dirNum = 0;
       greenExitLight(1);
-      blinkInt = setInterval(()=>{
-        blinkBool = !blinkBool;
-        greenExitLight((blinkBool)?1:0);
-      },500)
       redExitLight(0);
-      save(dir);
+      if (fs.existsSync(dir)) deleteFolderRecursive(dir);
+      fs.mkdirSync(dir);
+      cam.saveImages(dir);
+      fs.utimesSync(dir,NaN,NaN);
 
 
       cState = false;
@@ -321,53 +216,61 @@ var countdown = (count) => {
   }
 };
 
-window.resetCam = function () {
-  waitForSave = false;
-}
+var cageOccupied = false;
 
 window.startCntdn = function(pin, state) {
   console.log(state + " is the current state");
-  if ( !state && !waitForSave && !cageOccupied) {
-    resetIdleTimeout();
-    waitForSave = true;
-    cageOccupied = true;
-    countdown(5);
-    greenExitLight(0);
-    redExitLight(0);
-    greenEntranceLight( 0);
-    redEntranceLight( 1);
-  }
+  if(cam.isReady())
+    if ( !state && !cageOccupied ) {
+      cageOccupied = true;
+      cam.prepare();
+      resetIdleTimeout();
+      countdown(5);
+      greenExitLight(0);
+      redExitLight(0);
+      greenEntranceLight( 0);
+      redEntranceLight( 1);
+    }
 
 };
-
-startBut.onclick = ()=>{
-  cageOccupied = false;
-  window.startCntdn();
-}
-
 
 arduino.connect(cfg.portName, function() {
   console.log('Connecting to Arduino');
   //pollLight.setStage(4);
 
-  arduino.watchPin(2, window.startCntdn);
+  arduino.watchPin(12, window.startCntdn);
 
-  arduino.watchPin(14, function(pin, state) {
+  arduino.watchPin(8, function(pin, state) {
+    console.log(state + " is the current state");
+    if (state) {
+      setTimeout(()=>{
+        greenExitLight(0);
+        redExitLight(1);
+        greenEntranceLight( 0);
+        redEntranceLight( 1);
+      },1000);
+    }
+  });
+
+  arduino.watchPin(7, function(pin, state) {
     console.log(state + " is the current state on "+ pin);
     if (state) {
       setTimeout(()=>{
         cageOccupied = false;
         greenExitLight(0);
         redExitLight(1);
-        clearInterval(blinkInt);
         greenEntranceLight( 1);
         redEntranceLight( 0);
-        //pollLight.setStage(4);
+        pollLight.setStage(4)
       },1000);
     }
   });
 
   console.log('arduino start')
+
+  arduino.digitalWrite(9,1);
+  arduino.digitalWrite(6,1);
+  arduino.digitalWrite(4,1);
 
   greenExitLight(0);
   redExitLight(1);
@@ -437,5 +340,4 @@ document.onkeypress = (e) => {
   if(press == 'g') {
     showGo();
   } else if(press == 'c') startCntdn();
-  else if(press == 'r') waitForSave = false;
 }
