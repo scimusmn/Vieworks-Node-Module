@@ -23,7 +23,7 @@ include([], function() {
 
       _this.reset = () => {
         _this.className = '';
-        _this.thumb.src = _this.setName + '/thumb.jpg?' + Math.random();
+        _this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
       };
 
       _this.onmousedown = (e) => {
@@ -43,6 +43,7 @@ include([], function() {
         if (_this.clicked && e.target.parentNode == _this) {
           µ('.playback').style('display', 'inline-block');
           µ('.select').style('display', 'none');
+          µ('.justYou').style('display', 'inline-block');
           _this.className = '';
           _this.onSelect();
         }
@@ -55,13 +56,13 @@ include([], function() {
       };
 
       _this.refreshSet = function() {
-        _this.thumb.src = _this.setName + '/thumb.jpg?' + Math.random();
+        _this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
       };
     };
 
     this.attributeChangedCallback = function(attr, oldVal, newVal) {
       if (attr == 'setname') {
-        this.thumb.src = newVal + '/thumb.jpg?' + Math.random();
+        this.thumb.src = newVal + '/400.jpg?' + Math.random();
         this.setName = newVal;
       }
     };

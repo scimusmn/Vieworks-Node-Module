@@ -11,6 +11,8 @@ node_modules_old/*
 new_celebs/*
 app/src/vendor/*
 
+oldApp/*
+
 
 # Windows image file caches
 Thumbs.db

@@ -68,6 +68,8 @@ include(incs, () => {
 
     µ('#visitorPlayer').unload();
 
+    µ('.justYou').style('display', 'none');
+
     µ('.select').style('display', 'inline-block');
 
     µ('.playback').style('display', 'none');

@@ -11,14 +11,6 @@
 </head>
 
 <body class='main' oncontextmenu='return false;'>
-	<div id='topBar'>
-		<img id='mainTitle' src='assets/pngs/title.png'></img>
-		<div class='playback'>
-			<img is='but-ton' id='fyv' src='assets/pngs/button1.png'></img>
-			<img is='but-ton' id='jy' class='sideBySide' src='assets/pngs/button2.png'></img>
-			<img is='but-ton' id='sbs' class='justYou' src='assets/pngs/button3.png'></img>
-		</div>
-	</div>
 	<div class='playback' id='playbackDiv'>
 		<video-player id='visitorPlayer'></video-player>
 		<img class='justYou' id='visInstruct' src='assets/pngs/justYouInstruct.png'></img>
@@ -32,7 +24,33 @@
 		</div>
 	</div>
 	<div class='select' id='selectDiv'>
-		<thumb-group id='thumbs' player='visitorPlayer' max='21'></div>
+		<div id='recentText'>
+			<div class='en'>Most recent</div>
+			<div class='es'>Más reciente</div>
+		</div>
+		<thumb-group id='thumbs' player='visitorPlayer' max='16'></thumb-group>
+	</div>
+	<div id='topBar'>
+		<!-- <img id='mainTitle' src='assets/pngs/title.png'></img> -->
+		<div id='title'>
+			<div class='select'>
+				<div class='en'>Find your video</div>
+				<div class='es'>Encuentra tu video</div>
+			</div>
+			<div class='justYou'>
+				<div class='en'>Just you</div>
+				<div class='es'>Sólo tú</div>
+			</div>
+			<div class='sideBySide'>
+				<div class='en'>Side by side</div>
+				<div class='es'>Lado a lado</div>
+			</div>
+		</div>
+		<div class='playback'>
+			<img is='but-ton' id='fyv' src='assets/pngs/button1.png'></img>
+			<img is='but-ton' id='jy' class='sideBySide' src='assets/pngs/button2.png'></img>
+			<img is='but-ton' id='sbs' class='justYou' src='assets/pngs/button3.png'></img>
+		</div>
 	</div>
 
 </body>

@@ -13,8 +13,8 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
       _this.player.init(800);
 
       _this.button = new ToggleButton();
-      _this.button.setAttribute('active', 'assets/pngs/playButton.png');
-      _this.button.setAttribute('inactive', 'assets/pngs/pauseButton.png');
+      _this.button.setAttribute('active', 'assets/pngs/play-one.png');
+      _this.button.setAttribute('inactive', 'assets/pngs/pause-one.png');
 
       _this.slider = new Slider();
       _this.slider.setAttribute('orient', 'horiz');
