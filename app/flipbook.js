@@ -17,9 +17,10 @@ include([], function() {
       _this.loading = false;    //keeps track of whether or not the images are loaded.
       _this.curDir = 'default/';  //storing the name of the directory which we are currently browsing.
       _this.size = 0;
-      _this.numImages = 800;
 
       var imgPad = 20;
+
+      _this.imageOffset = {x: 0, y: -40};
 
       _this.onStop = () => {};
 
@@ -38,10 +39,11 @@ include([], function() {
 
       loadingImg.src = 'assets/pngs/loading.png';
 
-      _this.current = function(aug = 0) {
+      _this.current = function(aug) {
+        if(!aug) aug=0;
         //if (!_this.loaded) return notLoadedImg;
         //else
-        if (!_this.frames[_this.currentFrame + aug].loaded) return null;
+        if (!_this.frames[_this.currentFrame + aug].loaded) return notLoadedImg;
         return _this.frames[_this.currentFrame + aug];
       };
 
@@ -54,7 +56,7 @@ include([], function() {
         _this.frames = [];
         _this.loaded = false;
 
-        //_this.width = _this.width;
+        //_this.width = _this.width;      //this clears the html5 _this, for some reason
 
         for (let x = 1; x <= num; x++) {
           let imageObj = new Image();                       // new instance for each image
@@ -143,7 +145,8 @@ include([], function() {
         }
 
         ctx.globalAlpha = 1;
-        if (_this.current()) ctx.drawImage(_this.current(), 0, 0, _this.width, _this.height);
+        if (_this.current()) ctx.drawImage(_this.current(), _this.imageOffset.x, _this.imageOffset.y, _this.width-_this.imageOffset.x, _this.height-_this.imageOffset.y);
+        else ctx.drawImage(notLoadedImg, 0, 0, _this.width, _this.height);
 
         if (!_this.loaded) {
           ctx.globalAlpha = 0.5;

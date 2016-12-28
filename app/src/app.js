@@ -1,10 +1,13 @@
 'use strict';
 
+console.log('app');
+
 let incs = [
-  'thumbSelect_revise.js',
+  'thumbnails.js',
   'webSockets.js',
   'videoPlayer.js',
   'button.js',
+  'config.js',
 ];
 
 include(incs, () => {
@@ -32,6 +35,8 @@ include(incs, () => {
   };
 
   webSockClient.connect();
+
+  µ('#celebPlayer').player.changeNotLoadedImage('assets/pngs/imageFrame.png');
 
   µ('#visitorPlayer').onLoad = () => {
     µ('#visitorPlayer').play();
@@ -99,4 +104,19 @@ include(incs, () => {
     var sld = µ('#celebSlider');
     sld.setPercent(-(parseFloat(_this.style.marginTop) / (_this.scrollHeight - _this.parentNode.clientHeight)));
   };
+
+  var resetTimer = null;
+
+  µ('#visitorPlayer').onVideoEnd = ()=>{
+    resetTimer = setTimeout(()=>{
+      showSelect();
+    },60000);
+  }
+
+  µ('body')[0].onclick = ()=>{
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(()=>{
+      showSelect();
+    },120000);
+  }
 });

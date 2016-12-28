@@ -26,6 +26,34 @@ wss.broadcast = function(data){
   });
 }
 
+////////////////////////////////////////////////////////////////////////
+// ########################### Declarations ############################
+////////////////////////////////////////////////////////////////////////
+
+var timeoutFlag = true;
+var blinkInt = null;
+var blinkBool = 1;
+
+var redInt = null;
+
+let idleTO = null;
+var dirNum = 0;
+
+var goShown = false;
+var audioPracticePlaying = false;
+
+var goTimeout = null;
+
+let resetIdleTimeout = () => {
+  timeoutFlag = false;
+  if (idleTO) clearTimeout(idleTO);
+  idleTO = setTimeout(()=> {
+    timeoutFlag = true;
+    redEntranceLight(1);
+    greenEntranceLight(0);
+  }, 60000);
+};
+
 var output = document.querySelector('#output');
 
 var cam = new vieworks.camera(function(){
@@ -83,8 +111,6 @@ var cam = new vieworks.camera(function(){
   output.textContent = 'Ready to record';
 });
 
-var cState = false;
-
 let beep = document.querySelector('#beep');
 beep.load();
 
@@ -97,6 +123,13 @@ clickTrack.load();
 let getReady = document.querySelector('#getReady');
 getReady.load();
 
+getReady.volume = .25;
+
+let exitTrack = document.querySelector('#exit');
+exitTrack.load();
+
+exitTrack.volume = .75;
+
 let audio = [];
 
 for (var i = 0; i < 4; i++) {
@@ -104,20 +137,7 @@ for (var i = 0; i < 4; i++) {
   audio[i].load();
 }
 
-
-let idleTO = null;
-
-let resetIdleTimeout = () => {
-  console.log()
-  if (idleTO) clearTimeout(idleTO);
-  idleTO = setTimeout(()=> {
-    alternateVideo();
-  }, 60000);
-};
-
-resetIdleTimeout();
-
-var loopPractice = () => {
+window.loopPractice = () => {
   cam.ready=false;
   arduino.digitalWrite(13, 0);
   console.log('Loop practice');
@@ -126,24 +146,36 @@ var loopPractice = () => {
   }, 100);
 };
 
-var showGo = () => {
+window.showGo = () => {
   arduino.digitalWrite(12, 0);
   console.log('Show go');
+  goShown = true;
   setTimeout(() => {
     arduino.digitalWrite(12, 1);
     setTimeout(() => {
-      loopPractice();
-    }, 22000);
+      goShown = false;
+      //loopPractice();
+    }, 16000);
   }, 100);
 };
 
-var alternateVideo = () => {
+window.showPracticeAudio = (fxn) => {
   arduino.digitalWrite(11, 0);
-  console.log("alternate");
+  console.log("practice audio");
+  audioPracticePlaying = true;
+  resetIdleTimeout();
   setTimeout(() => {
     arduino.digitalWrite(11, 1);
+    goTimeout = setTimeout(() => {
+      audioPracticePlaying = false;
+      showGo();
+      if(fxn) fxn();
+    }, 16000);
   }, 100);
 };
+
+//resetIdleTimeout();
+//alternateVideo();
 
 var greenExitLight = (state) => {
   arduino.digitalWrite(3, state);
@@ -155,7 +187,7 @@ var redExitLight = (state) => {
 
 var greenEntranceLight = (state) => {
   arduino.digitalWrite(5, state);
-  if (state) showGo();
+  //if (state) showGo();
 };
 
 var redEntranceLight = (state) => {
@@ -165,6 +197,21 @@ var redEntranceLight = (state) => {
 
 var waitForSave = false;
 var cageOccupied = false;
+
+
+var deleteFolderRecursive = function(path) {
+  if(path && fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
 
 window.save = (dir,saveOther) => {
   if (fs.existsSync(dir)) deleteFolderRecursive(dir);
@@ -255,23 +302,6 @@ var pollLight = new function(){
   }
 }
 
-var deleteFolderRecursive = function(path) {
-  if(path && fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file,index){
-      var curPath = path + "/" + file;
-      if(fs.lstatSync(curPath).isDirectory()) { // recurse
-        deleteFolderRecursive(curPath);
-      } else { // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(path);
-  }
-};
-
-var blinkInt = null;
-var blinkBool = 1;
-
 var countdown = (count) => {
   pollLight.setStage(count);
 
@@ -300,6 +330,7 @@ var countdown = (count) => {
 
     setTimeout(function() {
       //beep.play();
+      exitTrack.play();
       output.textContent = 'Done Recording';
       cam.stopCapture();
       pollLight.stopBlink();
@@ -312,11 +343,9 @@ var countdown = (count) => {
         blinkBool = !blinkBool;
         greenExitLight((blinkBool)?1:0);
       },500)
+      clearInterval(redInt);
       redExitLight(0);
       save(dir);
-
-
-      cState = false;
     }, cfg.recordTime);
   }
 };
@@ -328,11 +357,16 @@ window.resetCam = function () {
 window.startCntdn = function(pin, state) {
   console.log(state + " is the current state");
   if ( !state && !waitForSave && !cageOccupied) {
+    //timeoutFlag = false;
     resetIdleTimeout();
+    clearTimeout(goTimeout);
+    audioPracticePlaying = false;
+    clearInterval(blinkInt);
     waitForSave = true;
     cageOccupied = true;
     countdown(5);
     greenExitLight(0);
+    clearInterval(redInt);
     redExitLight(0);
     greenEntranceLight( 0);
     redEntranceLight( 1);
@@ -345,6 +379,24 @@ startBut.onclick = ()=>{
   window.startCntdn();
 }
 
+window.admitNext = ()=>{
+  showGo();
+  resetIdleTimeout();
+  greenExitLight(0);
+  clearInterval(redInt);
+  redInt = setInterval(()=>{
+    blinkBool = !blinkBool;
+    redExitLight((blinkBool)?1:0);
+  },500);
+  clearInterval(blinkInt);
+  greenEntranceLight( 1);
+  redEntranceLight( 0);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//####################### Arduino Declarartions #############################
+/////////////////////////////////////////////////////////////////////////////
 
 arduino.connect(cfg.portName, function() {
   console.log('Connecting to Arduino');
@@ -358,27 +410,64 @@ arduino.connect(cfg.portName, function() {
       setTimeout(()=>{
         cageOccupied = false;
         greenExitLight(0);
-        redExitLight(1);
+        clearInterval(redInt);
+        redInt = setInterval(()=>{
+          blinkBool = !blinkBool;
+          redExitLight((blinkBool)?1:0);
+        },500);
         clearInterval(blinkInt);
+      },1000);
+    }
+  });
+
+  arduino.watchPin(16, function(pin, state) {
+    if (!state) {
+      console.log('practice cage occupied');
+      if(!audioPracticePlaying){
+        if(timeoutFlag){
+          console.log('show practive with audio');
+          showPracticeAudio(admitNext);
+        } else if(!cageOccupied && !goShown){
+          admitNext();
+        }
+      }
+
+
+      /*setTimeout(()=>{
+        cageOccupied = false;
+        greenExitLight(0);
+        //redExitLight(1);
+        clearInterval(redInt);
+        redInt = setInterval(()=>{
+          blinkBool = !blinkBool;
+          redExitLight((blinkBool)?1:0);
+        },500);
+        clearInterval(blinkInt);
+        showGo();
+        resetIdleTimeout();
         greenEntranceLight( 1);
         redEntranceLight( 0);
-        //pollLight.setStage(4);
-      },1000);
+      },15000);*/
     }
   });
 
   console.log('arduino start')
 
   greenExitLight(0);
-  redExitLight(1);
+  //redExitLight(1);
+  clearInterval(redInt);
+  redInt = setInterval(()=>{
+    blinkBool = !blinkBool;
+    redExitLight((blinkBool)?1:0);
+  },500);
   greenEntranceLight( 1);
   redEntranceLight( 0);
 
 });
 
-var dirNum = 0;
-
-///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+//############################ File Handling ################################
+/////////////////////////////////////////////////////////////////////////////
 
 function readDir(path) {
   var files = fs.readdirSync(path);

@@ -34,7 +34,14 @@ function wsClient() {
     ws.onclose = function() {
       // websocket is closed.
       //alert("Connection is closed...");
-      connectInterval = setInterval(this.connect(), 2000);
+      //connectInterval = setInterval(this.connect(), 2000);
+      setInterval(()=>{
+        ajax(window.location.href,(html)=>{
+          location.reload();
+        },()=>{
+          console.log('server is down...');
+        })
+      }, 10000);
     };
 
   };
@@ -42,5 +49,7 @@ function wsClient() {
   //this.connect();
 
 }
+
+
 
 window.webSockClient = new wsClient();

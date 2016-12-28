@@ -1,6 +1,6 @@
 'use strict';
 
-include(['newBook.js', 'slider.js', 'toggleButton.js'], function() {
+include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
   var playerTag = inheritFrom(HTMLElement, function() {
     this.createdCallback = function() {
       var _this = this;
@@ -26,9 +26,12 @@ include(['newBook.js', 'slider.js', 'toggleButton.js'], function() {
 
       _this.appendChild(_this.controls);
 
+      _this.onVideoEnd = ()=>{};
+
       _this.player.onStop = function() {
         console.log('ended');
         _this.button.set();
+        _this.onVideoEnd();
       };
 
       _this.player.onUpdate = () => {
@@ -40,7 +43,7 @@ include(['newBook.js', 'slider.js', 'toggleButton.js'], function() {
       };
 
       _this.button.onReset = () => {
-        if (_this.slider.getPercent() >= .99) _this.player.reset();
+        if (_this.slider.getPercent() >= .99) _this.player.setFrameByPercent(0);
         _this.player.play();
       };
 
