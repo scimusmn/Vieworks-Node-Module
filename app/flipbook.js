@@ -43,7 +43,8 @@ include([], function() {
         if(!aug) aug=0;
         //if (!_this.loaded) return notLoadedImg;
         //else
-        if (!_this.frames[_this.currentFrame + aug].loaded) return notLoadedImg;
+        let img = _this.frames[_this.currentFrame + aug];
+        if (!img.loaded || !img.complete || (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0)) return notLoadedImg;
         return _this.frames[_this.currentFrame + aug];
       };
 

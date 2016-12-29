@@ -141,17 +141,31 @@ body.SideBySide #players {
 }*/
 
 video-player {
+	position: relative;
 	display: inline-block;
 	width: 27vw;
 	text-align: center;
 	padding-top: 5vh;
+	z-index: 1000;
 	/*height: 50vw;*/
+}
+
+video-player .loadMessage{
+	position: absolute;
+	width: 27vw;
+	height: 33.75vw;
+	text-align: center;
+	font-size: 3vh;
+	padding: 5vw;
+	/*padding-top: 10vh;*/
+	z-index: -100;
+	box-sizing: border-box;
 }
 
 canvas[is='flip-book'] {
 	width: 27vw;
 	height:33.75vw;
-	border: 8px solid #777;
+	border: 15px solid rgb(233, 238, 91);
 	box-sizing: border-box;
 }
 
@@ -190,10 +204,28 @@ canvas[is='flip-book'] {
 	line-height: 4vw;
 }
 
-#celebPlayer canvas[is='flip-book'] {
+/*#celebPlayer canvas[is='flip-book'] {
 	background-image: url("assets/pngs/compare-text.png");
 	background-size: contain;
 	background-repeat: no-repeat;
+}*/
+
+.athleteInfo {
+	position: absolute;
+	top:-3vh;
+	left: 0;
+	color: #fff;
+	width: 100%;
+	text-align: center;
+	font-size: 2vh;
+}
+
+.athleteInfo div:first-child {
+	font-size: 3vh;
+}
+
+#celebDiv {
+	position: relative;
 }
 
 img[is='tog-gle'] {
@@ -229,11 +261,6 @@ sli-der[orient='horiz'] {
 	text-align: left;
 	height: 5vh;
 	width: calc(100% - 5vh)
-}
-
-#celebDiv {
-	/*left: 33vw;
-	width: 66vw;*/
 }
 
 .sideBySide {

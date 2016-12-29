@@ -13,11 +13,19 @@
 	<div class='playback' id='playbackDiv'>
 		<div class='topSection' id='players'>
 			<video-player id='visitorPlayer'>
-				<div>Video is loading...</div>
+				<div class="loadMessage">
+					<div class='en'>Video is loading...</div>
+					<div class='en'>El video se está cargando...</div>
+				</div>
 			</video-player>
 			<div class='sideBySide' id='celebDiv'>
 				<img is='tog-gle' id='playBoth' active='assets/pngs/play-both-circle.png' inactive='assets/pngs/pause-both-circle.png'></img>
-				<video-player id='celebPlayer'></video-player>
+				<video-player id='celebPlayer'>
+					<div class="loadMessage">
+						<div class='en'>Compare your technique with that of an athlete.<br />Choose the action that matches yours from the list on the right.</div>
+						<div class='es'>Compara tu téchnica con la de un atleta.<br /> Escoge del la lista a la derecha la acción que corresponde con la tuya.</div>
+					</div>
+				</video-player>
 			</div>
 		</div>
 		<!-- <img class='justYou' id='visInstruct' src='assets/pngs/justYouInstruct.png'></img> -->

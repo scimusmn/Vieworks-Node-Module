@@ -7,6 +7,11 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
 
       var idleTimer = null;
 
+      _this.header = µ('+div', _this);
+      _this.header.className = 'athleteInfo sideBySide';
+      _this.athlete = µ('+div', _this.header);
+      _this.org = µ('+div', _this.header);
+
       _this.player = new FlipBook();
       _this.appendChild(_this.player);
 
@@ -67,8 +72,13 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
         clearInterval(idleTimer);
         idleTimer = setInterval(_this.player.idle, 50);
         ajax(dir + 'info.html',(html)=>{
-          console.log(html);
-        })
+          //console.log(html);
+          if(html){
+            console.log(µ('name',html)[0]);
+            _this.athlete.textContent = µ('name',html)[0].textContent;
+            _this.org.textContent = µ('org',html)[0].textContent;
+          }
+        });
         _this.player.loadSet(dir);
       };
 
@@ -78,7 +88,8 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
 
       _this.unload = () => {
         clearInterval(idleTimer);
-
+        _this.athlete.textContent = '';
+        _this.org.textContent = '';
         _this.player.reset();
       };
 
