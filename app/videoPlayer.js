@@ -15,6 +15,7 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
       _this.button = new ToggleButton();
       _this.button.setAttribute('active', 'assets/pngs/play-one.png');
       _this.button.setAttribute('inactive', 'assets/pngs/pause-one.png');
+      _this.button.className = 'justYou';
 
       _this.slider = new Slider();
       _this.slider.setAttribute('orient', 'horiz');
@@ -65,6 +66,9 @@ include(['flipbook.js', 'slider.js', 'toggleButton.js'], function() {
         console.log(dir + ' in videoP');
         clearInterval(idleTimer);
         idleTimer = setInterval(_this.player.idle, 50);
+        ajax(dir + 'info.html',(html)=>{
+          console.log(html);
+        })
         _this.player.loadSet(dir);
       };
 

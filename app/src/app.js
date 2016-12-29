@@ -20,6 +20,10 @@ include(incs, () => {
 
   var celebGroup = µ('#celebThumbs');
 
+  visGroup.onChoose = ()=>{
+    µ('body')[0].className = 'JustYou';
+  }
+
   window.webSockClient.onMessage = (evt) => {
     switch (evt.data.split('=')[0]){
       case 'seq':
@@ -51,39 +55,26 @@ include(incs, () => {
   /////////////////////////////
 
   function showJY() {
-    µ('.justYou').style('display', 'inline-block');
-
-    µ('.sideBySide').style('display', 'none');
+    µ('body')[0].className = 'JustYou';
   }
 
   function showSBS() {
-    µ('#celebPlayer').unload();
-    µ('.sideBySide').style('display', 'inline-block');
-
-    µ('.justYou').style('display', 'none');
+    µ('body')[0].className = 'SideBySide';
   }
 
   function showSelect() {
-    showJY();
-
-    µ('#visitorPlayer').unload();
-
-    µ('.justYou').style('display', 'none');
-
-    µ('.select').style('display', 'inline-block');
-
-    µ('.playback').style('display', 'none');
+    µ('body')[0].className = 'findYourVideo';
   }
 
   //////////////////////////////
   // ui functions
   /////////////////////////////
 
-  µ('#jy').onClick = showJY;
+  µ('#jy').onclick = showJY;
 
-  µ('#sbs').onClick = showSBS;
+  µ('#sbs').onclick = showSBS;
 
-  µ('#fyv').onClick = showSelect;
+  µ('#fyv').onclick = showSelect;
 
   µ('#playBoth').onSet = function() {
     µ('#visitorPlayer').pause();
@@ -95,17 +86,17 @@ include(incs, () => {
     µ('#celebPlayer').play();
   };
 
-  µ('#celebSlider').onMoved = () => {
-    var _this = µ('#celebSlider');
-    var cThumbs = µ('#celebThumbs');
-    cThumbs.style.marginTop = -(cThumbs.scrollHeight - cThumbs.parentNode.clientHeight) * _this.getPercent() + 'px';
-  };
-
-  µ('#celebThumbs').onMoved = () => {
-    var _this = µ('#celebThumbs');
-    var sld = µ('#celebSlider');
-    sld.setPercent(-(parseFloat(_this.style.marginTop) / (_this.scrollHeight - _this.parentNode.clientHeight)));
-  };
+  // µ('#celebSlider').onMoved = () => {
+  //   var _this = µ('#celebSlider');
+  //   var cThumbs = µ('#celebThumbs');
+  //   cThumbs.style.marginTop = -(cThumbs.scrollHeight - cThumbs.parentNode.clientHeight) * _this.getPercent() + 'px';
+  // };
+  //
+  // µ('#celebThumbs').onMoved = () => {
+  //   var _this = µ('#celebThumbs');
+  //   var sld = µ('#celebSlider');
+  //   sld.setPercent(-(parseFloat(_this.style.marginTop) / (_this.scrollHeight - _this.parentNode.clientHeight)));
+  // };
 
   var resetTimer = null;
 

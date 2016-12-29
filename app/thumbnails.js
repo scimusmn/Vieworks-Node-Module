@@ -5,13 +5,17 @@ include([], function() {
 
     this.createdCallback = function() {
       var _this = this;
-      _this.thumb = µ('+img', _this);
+      //_this.thumb = µ('+img', _this);
 
       _this.onSelect = () => {};
 
       _this.onMouseStart = (which) => {};
 
       _this.onMouseFinish = () => {};
+
+      _this.setImage = ()=>{
+        _this.style.backgroundImage = "url('"+_this.setName + '/400.jpg?' + Math.random()+"')";
+      }
     };
 
     this.attachedCallback = function() {
@@ -23,7 +27,8 @@ include([], function() {
 
       _this.reset = () => {
         _this.className = '';
-        _this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
+        //_this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
+        _this.setImage();
       };
 
       _this.onmousedown = (e) => {
@@ -40,10 +45,8 @@ include([], function() {
 
       _this.onmouseup = function(e) {
         console.log(e.target);
-        if (_this.clicked && e.target.parentNode == _this) {
-          µ('.playback').style('display', 'inline-block');
-          µ('.select').style('display', 'none');
-          µ('.justYou').style('display', 'inline-block');
+        if (_this.clicked) {
+
           _this.className = '';
           _this.onSelect();
         }
@@ -56,14 +59,15 @@ include([], function() {
       };
 
       _this.refreshSet = function() {
-        _this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
+        _this.setImage();
       };
     };
 
     this.attributeChangedCallback = function(attr, oldVal, newVal) {
+      var _this = this;
       if (attr == 'setname') {
-        this.thumb.src = newVal + '/400.jpg?' + Math.random();
-        this.setName = newVal;
+        _this.setName = newVal;
+        _this.setImage();
       }
     };
   });
@@ -114,6 +118,10 @@ include([], function() {
         _this.clicked = false;
       };
 
+      _this.onChoose = () =>{
+
+      }
+
       this.handleSet = function(setName) {
         var set = null;
         if (µ('[setName="' + setName + '"]') && µ('[setName="' + setName + '"]').length) {
@@ -127,6 +135,7 @@ include([], function() {
           set.setAttribute('setName', setName);
 
           set.onSelect = function() {
+            _this.onChoose();
             _this.player.loadSet(set.setName + '/');
           };
 
