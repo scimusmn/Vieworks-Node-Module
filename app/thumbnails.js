@@ -28,7 +28,7 @@ include([], function() {
       _this.reset = () => {
         _this.className = '';
         //_this.thumb.src = _this.setName + '/400.jpg?' + Math.random();
-        _this.setImage();
+        //_this.setImage();
       };
 
       _this.onmousedown = (e) => {
@@ -36,18 +36,16 @@ include([], function() {
         _this.clicked = true;
         document.onmouseup = _this.onmouseup;
         _this.onMouseStart(_this);
-
-        var rest = µ('thumb-nail');
-        for (var i = 0; i < rest.length; i++) {
-          rest[i].reset();
-        }
       };
 
       _this.onmouseup = function(e) {
         console.log(e.target);
         if (_this.clicked) {
-
-          _this.className = '';
+          var rest = µ('thumb-nail');
+          for (var i = 0; i < rest.length; i++) {
+            rest[i].reset();
+          }
+          _this.className = 'active';
           _this.onSelect();
         }
 
@@ -87,7 +85,6 @@ include([], function() {
 
       _this.logThumb = (aTh) => {
         _this.activeThumb = aTh;
-        console.log('thumb!');
       };
 
       _this.onMoved = () => {};
@@ -101,7 +98,7 @@ include([], function() {
       };
 
       _this.onmousemove = function(e) {
-        if (_this.clicked && _this.scrollHeight > _this.parentNode.clientHeight) {
+        if (_this.scrollable && _this.clicked && _this.scrollHeight > _this.parentNode.clientHeight) {
           if (Math.abs(e.clientY - _this.init.y) > 20 && _this.activeThumb)
             _this.activeThumb.clicked = false;
           var offset = e.clientY - _this.start.y;
@@ -122,10 +119,20 @@ include([], function() {
 
       }
 
+      _this.resetActive = ()=>{
+        var actives = µ('.active',_this);
+        if(actives.length){
+          for (var i = 0; i < actives.length; i++) {
+            actives[i].className = '';
+          }
+        }
+      }
+
       this.handleSet = function(setName) {
         var set = null;
         if (µ('[setName="' + setName + '"]') && µ('[setName="' + setName + '"]').length) {
           set = µ('[setName="' + setName + '"]')[0];
+          console.log(setName +' is the set name');
           set.setAttribute('setName', setName);
           set.refreshSet();
           _this.removeChild(set);

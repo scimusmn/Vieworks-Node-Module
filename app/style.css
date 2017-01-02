@@ -3,15 +3,18 @@
 	src: url('assets/fonts/avenir.ttc');
 }
 
+@font-face {
+  font-family: 'Avenir Next Condensed';
+  src: url('/media/fonts/AvenirNextCondensed.woff') format('woff'),
+  url('/media/fonts/AvenirNextCondensed.ttf') format('truetype');
+  font-style: normal;
+}
+
 .en {
-	font-weight: bolder;
-	font-family: sports;
 	color: #fff;
 }
 
 .es {
-	font-weight: bolder;
-	font-family: sports;
 	color: rgb(238,97,38);
 }
 
@@ -21,11 +24,12 @@ body {
 	background-repeat: no-repeat;
 	width: 100%;
 	height: 100%;
-	/*cursor: none;*/
+	cursor: none;
 	-webkit-user-select: none;
 	font-weight: bolder;
-	font-family: sports;
+	font-family: 'Avenir Next Condensed',sans-serif;
 	overflow: hidden;
+	pointer-events:visible;
 }
 
 .mainTable {
@@ -54,7 +58,7 @@ table {
 
 #navButtons {
 	position: fixed;
-	bottom: 0;
+	bottom: -10px;
 	right: 2vw;
 }
 
@@ -73,18 +77,21 @@ table {
 	margin-left: 1vw;
 	padding: 3vh;
 	padding-top: 2vh;
-	font-size: 2.1vh;
+	font-size: 1.8vh;
 	line-height: 4vh;
 	text-align: center;
 }
 
 .JustYou #jy, .SideBySide #sbs {
 	position: relative;
-	top: 10px;
+	top: 0px;
 	height: calc(12vh + 10px);
+	/*padding-top: calc(2vh - 10px);*/
+	padding: 2vh;
+	padding-top: 1vh;
 	background-color: #000;
 	box-sizing: border-box;
-	border: 10px solid rgb(233, 238, 91);
+	border: 1vh solid rgb(233, 238, 91);
 }
 
 #fyv {
@@ -191,7 +198,7 @@ canvas[is='flip-book'] {
 
 #visInstruct .textBlock{
 	display: inline-block;
-	font-size: 1.5vw;
+	font-size: 2.5vh;
 	width: 40vw;
 }
 
@@ -239,6 +246,10 @@ controls .slider-handle {
 	width: 5vh;
 	background:url(assets/pngs/horzScrollLever.png) no-repeat center center;
 	background-size: auto 100%;
+}
+
+.controls > img:first-child {
+	margin-right: 1vh;
 }
 
 sli-der {
@@ -320,10 +331,10 @@ sli-der[orient='vert'] {
 	background-position: 0 -.5vw;
 }
 
-#celebContainer > thumb-nail {
-	width: 100%;
-	height:25%;
+#celebThumbs > thumb-nail.active {
+	border-color: rgb(233, 238, 91);
 }
+
 
 #thumbs {
 	position: absolute;

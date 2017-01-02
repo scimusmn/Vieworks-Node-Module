@@ -11,12 +11,15 @@ include([], function() {
       var ctx = _this.getContext('2d');
 
       _this.frames = [];      //create the array of images which we flip through
+      _this.sets ={};
       _this.currentFrame = 0;      //stores the value of the current image being displayed
       _this.loaded = false,
       _this.playing = false,
       _this.loading = false;    //keeps track of whether or not the images are loaded.
       _this.curDir = 'default/';  //storing the name of the directory which we are currently browsing.
       _this.size = 0;
+
+      _this.cache = false;
 
       var imgPad = 20;
 
@@ -27,6 +30,8 @@ include([], function() {
       _this.onUpdate = () => {};
 
       _this.onLoad = () => {};
+
+      _this.onStateChange = ()=>{};
 
       var defaultSrc = 'assets/pngs/imageFrame.png';
       var notLoadedImg = new Image();
@@ -43,9 +48,9 @@ include([], function() {
         if(!aug) aug=0;
         //if (!_this.loaded) return notLoadedImg;
         //else
-        let img = _this.frames[_this.currentFrame + aug];
-        if (!img.loaded || !img.complete || (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0)) return notLoadedImg;
-        return _this.frames[_this.currentFrame + aug];
+        let img = _this.set[_this.currentFrame + aug];
+        if (!img.loaded || !img.complete || (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0)) return null;
+        return img;
       };
 
       //this is declaring member functions of the book class. The init function is used to load the images
@@ -57,7 +62,7 @@ include([], function() {
         _this.frames = [];
         _this.loaded = false;
 
-        //_this.width = _this.width;      //this clears the html5 _this, for some reason
+        //_this.width = _this.width;      //this clears the html5 canvas, for some reason
 
         for (let x = 1; x <= num; x++) {
           let imageObj = new Image();                       // new instance for each image
@@ -66,23 +71,51 @@ include([], function() {
         }
       };
 
+      _this.makeNewSet = (dir)=>{
+        _this.sets[dir] = [];
+        for (let x = 1; x <= _this.frames.length; x++) {
+          let imageObj = new Image();                       // new instance for each image
+          imageObj.loaded = false;
+          _this.sets[dir].push(imageObj);
+        }
+        _this.sets[dir].loaded = false;
+        _this.sets[dir].size = 0;
+      }
+
+      _this.checkForSet = (dir)=>{
+        dir = dir.replace('/','_');
+        console.log(dir);
+        if(!_this.sets[dir]) _this.makeNewSet(dir);
+        else _this.set.loaded = true;
+        _this.set = _this.sets[dir];
+      }
+
       _this.loadSet = function(dir) {
         _this.width = _this.clientWidth;
         _this.height = _this.clientHeight;
+        if(_this.cached) _this.checkForSet(dir);
+        else {
+          _this.set = _this.frames;
+          _this.set.loaded = false;
+          _this.set.size = 0;
+        }
+
         _this.reset();
-        _this.loaded = false;
+
         var totalImgs = 0;
-        _this.size = 0;
-        for (let i = 0; i < _this.frames.length; i++) {
-          let img = _this.frames[i];
+        if(!_this.set.loaded)
+        for (let i = 0; i < _this.set.length; i++) {
+          let img = _this.set[i];
           img.loaded = false;
-          img.src = dir + zeroPad(i, 3) + '.jpg';
+          var src = dir + zeroPad(i, 3) + '.jpg';
+          if(!_this.cached) src += '?' + Math.random();
+          img.src = src;
           img.onload = () => {
             img.loaded = true;
             totalImgs++;
-            _this.size++;
-            if (totalImgs == _this.frames.length) {
-              _this.loaded = true;
+            _this.set.size++;
+            if (totalImgs == _this.set.length) {
+              _this.set.loaded = true;
               _this.onLoad();
             }
           };
@@ -90,24 +123,24 @@ include([], function() {
           img.onerror = (e) => {
             totalImgs++;
             e.preventDefault();
-            if (totalImgs == _this.frames.length) {
-              _this.loaded = true;
+            if (totalImgs == _this.set.length) {
+              _this.set.loaded = true;
               _this.onLoad();
             }
           };
         }
       };
 
-      _this.unload = function() {
-        _this.loaded = _this.loading = _this.playing = false;
-        notLoadedImg.src = defaultSrc;
-        for (var i = 0; i < _this.frames.length; i++) {
-          _this.frames[i].src = null;
-        }
-
-        _this.frames = null;
-        _this.frames = [];
-      };
+      // _this.unload = function() {
+      //   _this.set.loaded = _this.loading = _this.playing = false;
+      //   notLoadedImg.src = defaultSrc;
+      //   for (var i = 0; i < _this.frames.length; i++) {
+      //     _this.frames[i].src = null;
+      //   }
+      //
+      //   _this.frames = null;
+      //   _this.frames = [];
+      // };
 
       _this.changeNotLoadedImage = function(title) {
         defaultSrc = title;
@@ -120,10 +153,10 @@ include([], function() {
         // the alternative is to untranslate & unrotate after drawing
         ctx.save();
 
-        // move to the center of the _this
+        // move to the center of the canvas (_this)
         ctx.translate(_this.width / 2, _this.height / 2);
 
-        // rotate the _this to the specified degrees
+        // rotate the ctx to the specified degrees
         ctx.rotate(degrees * Math.PI / 180);
 
         // draw the image
@@ -137,19 +170,19 @@ include([], function() {
       var degs = 0;
 
       _this.idle = function() {            //increment the image pointer, if we are playing
-        if (_this.playing && _this.currentFrame < _this.size - 1 && _this.current(1).loaded) {
+        if (_this.playing && _this.currentFrame < _this.set.size - 1 && _this.current(1).loaded) {
           _this.currentFrame++;
           _this.onUpdate();
-        } else if (_this.currentFrame >= _this.size - 1 && _this.playing) {
-          _this.playing = false;
+        } else if (_this.currentFrame >= _this.set.size - 1 && _this.playing) {
+          _this.stop();
           _this.onStop();
         }
 
         ctx.globalAlpha = 1;
         if (_this.current()) ctx.drawImage(_this.current(), _this.imageOffset.x, _this.imageOffset.y, _this.width-_this.imageOffset.x, _this.height-_this.imageOffset.y);
-        else ctx.drawImage(notLoadedImg, 0, 0, _this.width, _this.height);
+        //else ctx.drawImage(notLoadedImg, 0, 0, _this.width, _this.height);
 
-        if (!_this.loaded) {
+        if (!_this.set.loaded) {
           ctx.globalAlpha = 0.5;
           ctx.beginPath();
           ctx.rect(0, 0, _this.width, _this.height);
@@ -163,10 +196,12 @@ include([], function() {
 
       _this.play = function() {
         _this.playing = true;
+          _this.onStateChange();
       };
 
       _this.stop = function() {
         _this.playing = false;
+        _this.onStateChange();
       };
 
       _this.togglePlay = function() {
@@ -179,18 +214,17 @@ include([], function() {
       };
 
       _this.setFrameByPercent = function(perc) {
-        _this.currentFrame = Math.round(perc * (_this.frames.length - 1));
+        _this.currentFrame = Math.round(perc * (_this.set.length - 1));
       };
 
       _this.getPercentDone = function() {
-        return _this.currentFrame / _this.size;
+        return _this.currentFrame / _this.set.size;
       };
 
       _this.reset = function() {
         console.log('resetting ' + _this.curDir);
         _this.currentFrame = 0;
-        _this.playing = false;
-        _this.loaded = false;
+        _this.stop();
 				_this.width = _this.width;
         for (let i = 0; i < _this.frames.length; i++) {
           _this.frames[i].loaded = false;

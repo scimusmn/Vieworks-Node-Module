@@ -40,7 +40,8 @@ include(incs, () => {
 
   webSockClient.connect();
 
-  µ('#celebPlayer').player.changeNotLoadedImage('assets/pngs/imageFrame.png');
+  //µ('#celebPlayer').player.changeNotLoadedImage('assets/pngs/imageFrame.png');
+  µ('#celebPlayer').player.cached = true;
 
   µ('#visitorPlayer').onLoad = () => {
     µ('#visitorPlayer').play();
@@ -50,12 +51,26 @@ include(incs, () => {
     µ('#celebPlayer').play();
   };
 
+  µ('#celebPlayer').player.onStateChange = ()=>{
+    let celebState = µ('#celebPlayer').player.playing;
+    let visitorState = µ('#visitorPlayer').player.playing;
+
+    if(celebState || visitorState){
+      µ('#playBoth').reset();
+    } else if(!celebState && !visitorState){
+      µ('#playBoth').set();
+    }
+  }
+
+  µ('#visitorPlayer').player.onStateChange = µ('#celebPlayer').player.onStateChange;
+
   /////////////////////////////
   // mode selectors
   /////////////////////////////
 
   function showJY() {
     µ('body')[0].className = 'JustYou';
+    µ('#celebPlayer').unload();
   }
 
   function showSBS() {
@@ -63,7 +78,12 @@ include(incs, () => {
   }
 
   function showSelect() {
+    µ('#visitorPlayer').unload();
+    µ('#celebPlayer').unload();
     µ('body')[0].className = 'findYourVideo';
+    if(resetTimer) clearTimeout(resetTimer);
+    visGroup.resetActive();
+    celebGroup.resetActive();
   }
 
   //////////////////////////////
@@ -107,6 +127,8 @@ include(incs, () => {
   }
 
   µ('body')[0].onclick = ()=>{
+    console.log('body click!');
+
     clearTimeout(resetTimer);
     resetTimer = setTimeout(()=>{
       showSelect();

@@ -40,6 +40,10 @@ include([], function() {
         }
       };
 
+      _this.onmousedown = (e)=>{
+        e.preventDefault();
+      }
+
       _this.onclick = function(e) {
         e.preventDefault();
         _this.toggle();
