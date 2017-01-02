@@ -102,7 +102,9 @@ include([], function() {
 
         _this.reset();
 
-        var totalImgs = 0;
+        _this.set.totalImgs = 0;
+
+        let set = _this.set;
         if(!_this.set.loaded)
         for (let i = 0; i < _this.set.length; i++) {
           let img = _this.set[i];
@@ -112,19 +114,19 @@ include([], function() {
           img.src = src;
           img.onload = () => {
             img.loaded = true;
-            totalImgs++;
-            _this.set.size++;
-            if (totalImgs == _this.set.length) {
-              _this.set.loaded = true;
+            set.totalImgs++;
+            set.size++;
+            if (set.totalImgs == set.length) {
+              set.loaded = true;
               _this.onLoad();
             }
           };
 
           img.onerror = (e) => {
-            totalImgs++;
+            set.totalImgs++;
             e.preventDefault();
-            if (totalImgs == _this.set.length) {
-              _this.set.loaded = true;
+            if (set.totalImgs == set.length) {
+              set.loaded = true;
               _this.onLoad();
             }
           };

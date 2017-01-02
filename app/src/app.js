@@ -121,13 +121,13 @@ include(incs, () => {
   var resetTimer = null;
 
   µ('#visitorPlayer').onVideoEnd = ()=>{
+    clearTimeout(resetTimer);
     resetTimer = setTimeout(()=>{
       showSelect();
     },60000);
   }
 
   µ('body')[0].onclick = ()=>{
-    console.log('body click!');
 
     clearTimeout(resetTimer);
     resetTimer = setTimeout(()=>{
