@@ -33,6 +33,8 @@ include(incs, () => {
 
         celebGroup.handleSet(evt.data.split('=')[1],parseInt(evt.data.split(':')[2]));
         break;
+      case 'reload':
+        location.reload();
       default:
         break;
     }
@@ -78,12 +80,13 @@ include(incs, () => {
   }
 
   function showSelect() {
-    µ('#visitorPlayer').unload();
-    µ('#celebPlayer').unload();
-    µ('body')[0].className = 'findYourVideo';
     if(resetTimer) clearTimeout(resetTimer);
     visGroup.resetActive();
     celebGroup.resetActive();
+
+    µ('#visitorPlayer').unload();
+    µ('#celebPlayer').unload();
+    µ('body')[0].className = 'findYourVideo';
   }
 
   //////////////////////////////

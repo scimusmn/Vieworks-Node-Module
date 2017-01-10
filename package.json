@@ -1,10 +1,10 @@
 {
-  "name": "electron-quick-start",
+  "name": "vieworks-electron-application",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "An electron wrapper to control vieworks cameras",
   "main": "main.js",
   "scripts": {
-    "start": "env GENICAM_ROOT_V2_3=/opt/genicam2.3.1/ electron main.js --enable-logging --debug=5858"
+    "start": "env GENICAM_ROOT_V2_3=/opt/genicam2.3.1/ electron /usr/local/src/motionLab/main.js --enable-logging --debug=5858"
   },
   "repository": {
     "type": "git",

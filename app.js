@@ -2,12 +2,6 @@
 "use strict";
 
 ////////////////////////////////////////////////////////////////////////
-// ########################### Config Options ##########################
-////////////////////////////////////////////////////////////////////////
-
-var setsToStore = 16;
-
-////////////////////////////////////////////////////////////////////////
 // ######################## Require libraries ##########################
 ////////////////////////////////////////////////////////////////////////
 
@@ -57,14 +51,17 @@ var goTimeout = null;
 var waitForSave = false;
 var cageOccupied = false;
 
+var idle = ()=> {
+  timeoutFlag = true;
+  cageReset();
+  redEntranceLight(1);
+  greenEntranceLight(0);
+}
+
 let resetIdleTimeout = () => {
   timeoutFlag = false;
   if (idleTO) clearTimeout(idleTO);
-  idleTO = setTimeout(()=> {
-    timeoutFlag = true;
-    redEntranceLight(1);
-    greenEntranceLight(0);
-  }, 60000);
+  idleTO = setTimeout(idle, 60000);
 };
 
 var output = document.querySelector('#output');
@@ -187,7 +184,7 @@ window.showPracticeAudio = (fxn) => {
   arduino.digitalWrite(13, 0);
   console.log("practice audio");
   audioPracticePlaying = true;
-  resetIdleTimeout();
+  //resetIdleTimeout();
   setTimeout(() => {
     arduino.digitalWrite(13, 1);
     goTimeout = setTimeout(() => {
@@ -294,9 +291,9 @@ window.save = (dir,saveOther) => {
     output.textContent = 'Done Saving.';
     //force folder to update it's modification time.
     fs.utimesSync(dir,NaN,NaN);
-    console.log('seq=' + dir);
+    //console.log('seq=' + dir.replace('./app/',''));
     //var num = fs.readdirSync('sequences/temp' + (dirNum - 1)).length;
-    if (wss&&!saveOther) wss.broadcast('seq=' + 'sequences/temp' + ((dirNum - 1)%setsToStore));
+    if (wss&&!saveOther) wss.broadcast('seq=' + dir.replace('./app/',''));
     console.log('saved to ' + dir);
     cam.ready = true;
     waitForSave = false;
@@ -327,7 +324,7 @@ var countdown = (count) => {
       pollLight.setRed();
       console.log('done capturing');
       var dir = './app/sequences/temp' + dirNum++;
-      if(dirNum>=setsToStore) dirNum = 0;
+      if(dirNum>=cfg.setsToStore) dirNum = 0;
       greenExitLight(1);
       blinkInt = setInterval(()=>{
         blinkBool = !blinkBool;
@@ -390,6 +387,16 @@ window.admitNext = ()=>{
   redEntranceLight( 0);
 }
 
+var cageReset = ()=>{
+  cageOccupied = false;
+  greenExitLight(0);
+  clearInterval(redInt);
+  redInt = setInterval(()=>{
+    blinkBool = !blinkBool;
+    redExitLight((blinkBool)?1:0);
+  },500);
+  clearInterval(blinkInt);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //####################### Arduino Declarartions #############################
@@ -404,16 +411,7 @@ arduino.connect(cfg.portName, function() {
   arduino.watchPin(14, function(pin, state) {
     console.log(state + " is the current state on "+ pin);
     if (state) {
-      setTimeout(()=>{
-        cageOccupied = false;
-        greenExitLight(0);
-        clearInterval(redInt);
-        redInt = setInterval(()=>{
-          blinkBool = !blinkBool;
-          redExitLight((blinkBool)?1:0);
-        },500);
-        clearInterval(blinkInt);
-      },1000);
+      setTimeout(cageReset,1000);
     }
   });
 
@@ -433,7 +431,7 @@ arduino.connect(cfg.portName, function() {
 
   console.log('arduino start')
 
-  greenExitLight(0);
+  /*greenExitLight(0);
   //redExitLight(1);
   clearInterval(redInt);
   redInt = setInterval(()=>{
@@ -441,8 +439,9 @@ arduino.connect(cfg.portName, function() {
     redExitLight((blinkBool)?1:0);
   },500);
   greenEntranceLight( 1);
-  redEntranceLight( 0);
+  redEntranceLight( 0);*/
 
+  idle();
 });
 
 /////////////////////////////////////////////////////////////////////////////
@@ -495,12 +494,16 @@ wss.on('connection', function(ws) {
   });
 });
 
-
+/////////////////////////////////////////////////////////////////////////////
+//############################ Keyboard input ###############################
+/////////////////////////////////////////////////////////////////////////////
 
 document.onkeypress = (e) => {
   var press = String.fromCharCode(e.keyCode);
   if(press == 'g') {
     showGo();
   } else if(press == 'c') startCntdn();
-  else if(press == 'r') waitForSave = false;
+  else if(press == 'r'){
+    if(wss) wss.broadcast('reload');
+  }
 }

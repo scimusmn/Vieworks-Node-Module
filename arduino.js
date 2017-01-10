@@ -177,7 +177,6 @@ var Arduino = function() {
     if (msg.length >= 1) {
       for (var i = 0; i < msg.length; i++) {
         var chr = msg.charCodeAt(i);
-        console.log('char is ' + chr);
         if (chr & ANA_READ) {  //if the packet is analogRead
           var pin = ((chr & 56) >> 3);        //extract the pin number
           var val = ((chr & 7) << 7) + (msg.charCodeAt(++i) & 127); //extract the value

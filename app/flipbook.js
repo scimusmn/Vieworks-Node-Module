@@ -93,6 +93,7 @@ include([], function() {
       _this.loadSet = function(dir) {
         _this.width = _this.clientWidth;
         _this.height = _this.clientHeight;
+        _this.curDir = dir;
         if(_this.cached) _this.checkForSet(dir);
         else {
           _this.set = _this.frames;
@@ -105,32 +106,33 @@ include([], function() {
         _this.set.totalImgs = 0;
 
         let set = _this.set;
-        if(!_this.set.loaded)
-        for (let i = 0; i < _this.set.length; i++) {
-          let img = _this.set[i];
-          img.loaded = false;
-          var src = dir + zeroPad(i, 3) + '.jpg';
-          if(!_this.cached) src += '?' + Math.random();
-          img.src = src;
-          img.onload = () => {
-            img.loaded = true;
-            set.totalImgs++;
-            set.size++;
-            if (set.totalImgs == set.length) {
-              set.loaded = true;
-              _this.onLoad();
-            }
-          };
+        if(!_this.set.loaded){
+          for (let i = 0; i < _this.set.length; i++) {
+            let img = _this.set[i];
+            img.loaded = false;
+            var src = dir + zeroPad(i, 3) + '.jpg';
+            if(!_this.cached) src += '?' + Math.random();
+            img.src = src;
+            img.onload = () => {
+              img.loaded = true;
+              set.totalImgs++;
+              set.size++;
+              if (set.totalImgs == set.length) {
+                set.loaded = true;
+                _this.onLoad();
+              }
+            };
 
-          img.onerror = (e) => {
-            set.totalImgs++;
-            e.preventDefault();
-            if (set.totalImgs == set.length) {
-              set.loaded = true;
-              _this.onLoad();
-            }
-          };
-        }
+            img.onerror = (e) => {
+              set.totalImgs++;
+              e.preventDefault();
+              if (set.totalImgs == set.length) {
+                set.loaded = true;
+                _this.onLoad();
+              }
+            };
+          }
+        } else _this.onLoad();
       };
 
       // _this.unload = function() {
@@ -224,15 +226,19 @@ include([], function() {
       };
 
       _this.reset = function() {
-        console.log('resetting ' + _this.curDir);
-        _this.currentFrame = 0;
-        _this.stop();
-				_this.width = _this.width;
-        for (let i = 0; i < _this.frames.length; i++) {
-          _this.frames[i].loaded = false;
-        }
+        if(_this.set){
+          console.log('resetting ' + _this.curDir);
+          _this.currentFrame = 0;
+          _this.stop();
+          _this.width = _this.width;
+          if(!_this.cached){
+            for (let i = 0; i < _this.frames.length; i++) {
+              _this.frames[i].loaded = false;
+            }
+          }
 
-        _this.onUpdate();
+          _this.onUpdate();
+        }
       };
 
     };

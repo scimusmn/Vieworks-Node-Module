@@ -235,22 +235,22 @@ canvas[is='flip-book'] {
 	position: relative;
 }
 
-img[is='tog-gle'] {
-	/*margin-right: 1vh;
+.controls img[is='tog-gle'] {
+	margin-right: 1vh;
 	height: 5vh;
-	width: 5vh;*/
+	width: 5vh;
 }
 
-controls .slider-handle {
+/*controls .slider-handle {
 	height: 5vh;
 	width: 5vh;
 	background:url(assets/pngs/horzScrollLever.png) no-repeat center center;
 	background-size: auto 100%;
-}
+}*/
 
-.controls > img:first-child {
+/*.controls > img:first-child {
 	margin-right: 1vh;
-}
+}*/
 
 sli-der {
 	position:relative;
