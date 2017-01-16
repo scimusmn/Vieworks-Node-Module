@@ -305,13 +305,18 @@ var countdown = (count) => {
 
   if (count > 0) {
     output.textContent = count;
-    if(count<4) audio[count].play();
+    if(count<4){
+      audio[count].currentTime = 0;
+      audio[count].play();
+    }
     setTimeout(() => { countdown(count - 1); }, 1000);
     if(count == 1 ) cam.capture();
     else if(count == 5) getReady.play();
   } else {
     output.textContent = 'Recording...';
+    audio[count].currentTime = 0;
     audio[count].play();
+    clickTrack.currentTime = 0;
     clickTrack.play();
     pollLight.blink();
     console.log('start capture');
@@ -481,7 +486,14 @@ wss.on('connection', function(ws) {
   }
 
   ws.on('message', function(message) {
-    //console.log('received: %s', message);
+    switch (message.split('=')[0]){
+      case 'del':
+        console.log('deleting folder ' + message.split('=')[1]);
+        deleteFolderRecursive('app/' + message.split('=')[1] + '/');
+        wss.broadcast('reload');
+        //
+        break;
+    }
   });
 
   ws.on('close', function() {

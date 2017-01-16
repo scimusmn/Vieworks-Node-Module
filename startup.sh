@@ -1,7 +1,7 @@
 #######################################################
 #! /bin/sh
 echo "Delaying 30 seconds before Motion Lab startup."
-sleep 30
+sleep 60
 
 echo "Starting Motion Lab."
 

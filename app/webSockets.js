@@ -1,9 +1,13 @@
 function wsClient() {
   var _this = this;
-  var ws;
+  var ws = null;
   var connectInterval;
 
   this.onMessage = function(evt) {};
+
+  this.send = function (message) {
+    if(ws) ws.send(message);
+  }
 
   this.connect = function() {
     var loc = window.location.host;//.substring(0, window.location.host.lastIndexOf(':'));

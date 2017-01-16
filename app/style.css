@@ -430,11 +430,15 @@ thumb-nail.thumbSelect > img {
 
 /* classes that control visibility*/
 
-.select, .playback, .justYou, .sideBySide {
+.select, .playback, .justYou, .sideBySide, .adminMode {
 	display: none;
 }
 
 body.findYourVideo .select {
+	display:inline-block;
+}
+
+body.AdminMode .adminMode {
 	display:inline-block;
 }
 

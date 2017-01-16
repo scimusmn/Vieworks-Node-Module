@@ -115,7 +115,7 @@ include([], function() {
         _this.clicked = false;
       };
 
-      _this.onChoose = () =>{
+      _this.onChoose = (set) =>{
 
       }
 
@@ -142,7 +142,7 @@ include([], function() {
           set.setAttribute('setName', setName);
 
           set.onSelect = function() {
-            _this.onChoose();
+            _this.onChoose(set);
             _this.player.loadSet(set.setName + '/');
           };
 

@@ -20,8 +20,21 @@ include(incs, () => {
 
   var celebGroup = µ('#celebThumbs');
 
-  visGroup.onChoose = ()=>{
+  visGroup.onChoose = (set)=>{
     µ('body')[0].className = 'JustYou';
+
+    if(visGroup.adminMode) window.webSockClient.send('del='+set.setName);
+  }
+
+  var elementIndex = function(child){
+    if(child.previousSibling == null) return 1;
+    else return elementIndex(child.previousSibling)+1;
+  }
+
+  celebGroup.code = '';
+
+  celebGroup.onChoose = (set)=>{
+    celebGroup.code += elementIndex(set);
   }
 
   window.webSockClient.onMessage = (evt) => {
@@ -72,11 +85,13 @@ include(incs, () => {
 
   function showJY() {
     µ('body')[0].className = 'JustYou';
+    visGroup.adminMode = false;
     µ('#celebPlayer').unload();
   }
 
   function showSBS() {
     µ('body')[0].className = 'SideBySide';
+    visGroup.adminMode = false;
   }
 
   function showSelect() {
@@ -97,7 +112,20 @@ include(incs, () => {
 
   µ('#sbs').onclick = showSBS;
 
-  µ('#fyv').onclick = showSelect;
+  µ('#fyv').onclick = function () {
+    showSelect();
+    if(celebGroup.code == '31415'){
+      visGroup.adminMode = true;
+      µ('body')[0].className += ' AdminMode';
+    }
+
+    celebGroup.code = '';
+  }
+
+  µ('#adminExit').onclick = function () {
+    visGroup.adminMode = false;
+    showSelect();
+  }
 
   µ('#playBoth').onSet = function() {
     µ('#visitorPlayer').pause();
