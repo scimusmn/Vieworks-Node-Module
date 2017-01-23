@@ -27,7 +27,7 @@ body {
 	cursor: none;
 	-webkit-user-select: none;
 	font-weight: bolder;
-	font-family: 'Avenir Next Condensed',sans-serif;
+	font-family: 'Avenir Next Condensed', sans-serif;
 	overflow: hidden;
 	pointer-events:visible;
 }

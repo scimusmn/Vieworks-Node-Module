@@ -81,7 +81,7 @@ var cam = new vieworks.camera(function(){
 
   cam.startCapture(function(val){
     cam.ready = true;
-    var ctx = can.getContext('2d');
+    /*var ctx = can.getContext('2d');
     var ptx = pre.getContext('2d');
 
     var w = Math.ceil(cam.getWidth());
@@ -118,7 +118,7 @@ var cam = new vieworks.camera(function(){
           }
         });
       }
-    },50);
+    },50);*/
   });
 
   output.textContent = 'Ready to record';
