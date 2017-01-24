@@ -54,6 +54,7 @@ var cageOccupied = false;
 var idle = ()=> {
   timeoutFlag = true;
   cageReset();
+  if(waitForSave) location.reload();
   redEntranceLight(1);
   greenEntranceLight(0);
 }
@@ -159,7 +160,6 @@ for (var i = 0; i < 4; i++) {
 ////////////////////////////////////////////////////////////////////////
 
 window.loopPractice = () => {
-  cam.ready=false;
   arduino.digitalWrite(13, 0);
   console.log('Loop practice');
   setTimeout(() => {
@@ -347,8 +347,7 @@ window.resetCam = function () {
 }
 
 window.startCntdn = function(pin, state) {
-  console.log(state + " is the current state");
-  if ( !state && !waitForSave && !cageOccupied) {
+  if ( !state && cam.ready && !waitForSave && !cageOccupied) {
     //timeoutFlag = false;
     resetIdleTimeout();
     clearTimeout(goTimeout);
