@@ -73,7 +73,7 @@ var output = document.querySelector('#output');
 
 var cam = new vieworks.camera(function(){
   cam.setFrameRate(200);
-  cam.setImageGain(6);
+  cam.setImageGain(24);
 
   cam.allocateBuffer(1600);
 
@@ -406,6 +406,20 @@ var cageReset = ()=>{
 //####################### Arduino Declarartions #############################
 /////////////////////////////////////////////////////////////////////////////
 
+var ardTimeout = null;
+
+var resetArduinoHeartbeat = (time)=>{
+  if(ardTimeout) clearTimeout(ardTimeout);
+  ardTimeout = setTimeout(()=>{
+    console.log('Arduino not responsive, reloading.');
+    location.reload();
+  },time);
+}
+
+resetArduinoHeartbeat(60000);
+
+var heartbeatInt = null;
+
 arduino.connect(cfg.portName, function() {
   console.log('Connecting to Arduino');
   //pollLight.setStage(4);
@@ -413,7 +427,7 @@ arduino.connect(cfg.portName, function() {
   arduino.watchPin(2, window.startCntdn);
 
   arduino.watchPin(14, function(pin, state) {
-    console.log(state + " is the current state on "+ pin);
+    //console.log(state + " is the current state on "+ pin);
     if (state) {
       setTimeout(cageReset,1000);
     }
@@ -433,7 +447,18 @@ arduino.connect(cfg.portName, function() {
     }
   });
 
-  console.log('arduino start')
+  arduino.analogReport(5,500,(pin,val)=>{
+    console.log('Heartbeat');
+    resetArduinoHeartbeat(10000);
+  });
+
+
+  /*heartbeatInt = setInterval(()=>{
+    console.log('Try to get heartbeat.');
+    arduino.analogRead(5);
+  },1000);*/
+
+  console.log('Connected to arduino');
 
   /*greenExitLight(0);
   //redExitLight(1);

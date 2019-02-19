@@ -36,6 +36,10 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  mainWindow.webContents.on('crashed', function () {
+    mainWindow.reload();
+  })
 }
 
 // This method will be called when Electron has finished
